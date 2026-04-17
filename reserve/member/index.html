@@ -2,77 +2,221 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>たまフィット - システム診断</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>たまフィット - 会員様専用予約</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
-    body { background-color: #1e1e1e; color: #00ff00; font-family: monospace; padding: 20px; font-size: 14px; line-height: 1.6; }
-    h3 { color: #fff; border-bottom: 1px solid #555; padding-bottom: 10px; }
-    .log { margin-bottom: 5px; border-left: 3px solid #00ff00; padding-left: 10px; }
-    .error { color: #ff5555; border-left: 3px solid #ff5555; font-weight: bold; background: #331111; padding: 10px; margin-top: 10px; }
-    .success { color: #00aaff; border-left: 3px solid #00aaff; font-weight: bold; margin-top: 10px; }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f7f9fa; color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
+    .container { background: #ffffff; padding: 30px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 450px; box-sizing: border-box; }
+    .header { text-align: center; margin-bottom: 25px; border-bottom: 3px solid #2ea14c; padding-bottom: 15px; }
+    .header h1 { margin: 0; font-size: 22px; color: #1a1a1a; letter-spacing: 1px; }
+    .welcome-card { background: #eef9f1; border: 1px solid #c3e6cb; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: bold; color: #155724; font-size: 15px; line-height: 1.5; }
+    .info-text { text-align: center; font-size: 14px; color: #666; margin-bottom: 20px; line-height: 1.6; }
+    .input-group { margin-bottom: 20px; }
+    label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #444; }
+    input[type="text"], input[type="date"], select { width: 100%; padding: 14px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; background-color: #fafafa; appearance: none; }
+    .btn { width: 100%; padding: 16px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; box-sizing: border-box; }
+    .btn-primary { background-color: #2ea14c; color: white; box-shadow: 0 2px 6px rgba(46,161,76,0.3); }
+    .btn-primary:disabled { background-color: #a0d8b0; cursor: not-allowed; box-shadow: none; }
+    .btn-outline { background-color: white; border: 2px solid #2ea14c; color: #2ea14c; margin-top: 10px; }
+    .view-section { display: none; margin-top: 25px; padding-top: 25px; border-top: 1px dashed #ddd; }
+    #loading { text-align: center; padding: 50px 0; font-weight: bold; color: #2ea14c; }
+    #statusMsg { text-align: center; margin-top: 20px; font-weight: bold; font-size: 16px; }
   </style>
 </head>
 <body>
-  <h3>システム診断モード</h3>
-  <div id="console"></div>
 
-  <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbwk--BBlH7rg_VF9WDfqlvcmloBydipwdK60CVEk1fvPunvSTvR5IkbMxNbyHhmSDuS/exec";
-    const LIFF_ID = "2009803249-QQEbOzvg";
-    const con = document.getElementById('console');
+<div class="container">
+  <div id="loading">会員情報を確認中...</div>
 
-    function printLog(msg, type="log") {
-      con.innerHTML += `<div class="${type}">${msg}</div>`;
-    }
-
-    async function run() {
-      try {
-        printLog("1. LINE連携システムを起動中...");
-        await liff.init({ liffId: LIFF_ID });
-        printLog(" -> 初期化成功");
-
-        if (!liff.isLoggedIn()) {
-           printLog(" -> ⚠️ 未ログイン。LINEログイン画面へ移動します...", "error");
-           liff.login();
-           return;
-        }
-
-        printLog("2. お客様のLINE情報を取得中...");
-        const profile = await liff.getProfile();
-        printLog(` -> 取得成功 (ID: ${profile.userId.substring(0,8)}...)`);
-
-        printLog("3. たまフィット名簿(GAS)へ通信開始...");
-        const res = await fetch(`${GAS_URL}?action=getMember&lineId=${profile.userId}`);
-        printLog(` -> 通信完了 (HTTPステータス: ${res.status})`);
-
-        printLog("4. GASからの返信データを読み込み中...");
-        const text = await res.text();
-        printLog(` -> 読み込み完了 (文字数: ${text.length})`);
-        
-        if (!res.ok) {
-            printLog(` -> サーバーエラー返答: ${text.substring(0, 100)}`, "error");
-            return;
-        }
-
-        printLog("5. データを解析中...");
-        try {
-          const result = JSON.parse(text);
-          printLog(" -> 解析成功！", "success");
-          printLog(`結果: ${result.success ? "既存会員データを発見" : "新規お客様と判定"}`);
-          printLog("★システムは正常に動いています。元のHTMLに戻してください。", "success");
-        } catch (e) {
-          printLog("❌ 解析エラー！GASがデータを正しく返していません。", "error");
-          printLog(`原因: ${e.message}`, "error");
-          printLog(`GASの返答内容: ${text.substring(0, 150)}...`, "error");
-        }
-      } catch (err) {
-        printLog(`❌ 致命的なエラー発生: ${err.message}`, "error");
-      }
-    }
+  <div id="authArea" style="display:none;">
+    <div class="header">
+      <h1>たまフィット</h1>
+    </div>
+    <p class="info-text">会員情報の確認ができませんでした。<br>該当する方を選択して登録を完了してください。</p>
     
-    // 画面ロード時に自動実行
-    run();
-  </script>
+    <button class="btn btn-primary" onclick="showView('linkView')">会員番号をお持ちの方</button>
+    <button class="btn btn-outline" onclick="showView('regView')">はじめての方（新規登録）</button>
+
+    <div id="linkView" class="view-section">
+      <div class="input-group">
+        <label>会員番号</label>
+        <input type="text" id="linkId" placeholder="例: 25120001">
+      </div>
+      <div class="input-group">
+        <label>お名前（フルネーム）</label>
+        <input type="text" id="linkName" placeholder="例: 大林 誠也">
+      </div>
+      <button class="btn btn-primary" id="linkBtn" onclick="linkMember()">LINEと連携する</button>
+    </div>
+
+    <div id="regView" class="view-section">
+      <div class="input-group">
+        <label>お名前（フルネーム）</label>
+        <input type="text" id="regName" placeholder="例: 大林 誠也">
+      </div>
+      <div class="input-group">
+        <label>フリガナ</label>
+        <input type="text" id="regKana" placeholder="例: オオバヤシ セイヤ">
+      </div>
+      <button class="btn btn-primary" id="regBtn" onclick="registerMember()">会員情報を登録する</button>
+    </div>
+  </div>
+
+  <div id="bookingArea" style="display:none;">
+    <div class="header">
+      <h1>たまフィット 予約</h1>
+    </div>
+    
+    <div class="welcome-card" id="welcomeMsg"></div>
+    
+    <div class="input-group">
+      <label>予約希望日</label>
+      <input type="date" id="bookDate" onchange="loadSlots()">
+    </div>
+    
+    <div class="input-group">
+      <label>予約時間</label>
+      <select id="bookTime">
+        <option value="" disabled selected>日にちを先に選んでください</option>
+      </select>
+    </div>
+    
+    <button class="btn btn-primary" id="bookBtn" onclick="submitBooking()">予約を確定する</button>
+    <div id="statusMsg"></div>
+  </div>
+</div>
+
+<script>
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbwk--BBlH7rg_VF9WDfqlvcmloBydipwdK60CVEk1fvPunvSTvR5IkbMxNbyHhmSDuS/exec";
+  const LIFF_ID = "2009803249-QQEbOzvg";
+  
+  let userProfile = null;
+  let memberInfo = null;
+
+  async function init() {
+    try {
+      await liff.init({ liffId: LIFF_ID });
+      if (!liff.isLoggedIn()) { liff.login(); return; }
+      userProfile = await liff.getProfile();
+      
+      const res = await fetch(`${GAS_URL}?action=getMember&lineId=${userProfile.userId}`);
+      const result = await res.json();
+      
+      document.getElementById('loading').style.display = 'none';
+      
+      if (result.success) {
+        showBooking(result.member);
+      } else {
+        document.getElementById('authArea').style.display = 'block';
+      }
+    } catch (err) {
+      alert("通信エラーが発生しました。もう一度お試しください。");
+      console.error(err);
+    }
+  }
+
+  function showView(v) {
+    document.getElementById('linkView').style.display = (v === 'linkView' ? 'block' : 'none');
+    document.getElementById('regView').style.display = (v === 'regView' ? 'block' : 'none');
+  }
+
+  function showBooking(m) {
+    memberInfo = m;
+    document.getElementById('authArea').style.display = 'none';
+    document.getElementById('bookingArea').style.display = 'block';
+    document.getElementById('welcomeMsg').innerHTML = `${m.name} 様<br>いつもご利用ありがとうございます！`;
+    document.getElementById('bookDate').setAttribute('min', new Date().toISOString().split('T')[0]);
+  }
+
+  async function linkMember() {
+    const id = document.getElementById('linkId').value.trim();
+    const name = document.getElementById('linkName').value.trim();
+    if(!id || !name) return alert("すべての項目を入力してください。");
+    
+    const btn = document.getElementById('linkBtn');
+    btn.disabled = true;
+    btn.textContent = "連携中...";
+    
+    try {
+      const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action:"linkMember", memberId:id, name:name, lineId:userProfile.userId }) });
+      const r = await res.json();
+      if(r.status === "success") { 
+        showBooking(r.member); 
+      } else { 
+        alert(r.message); 
+      }
+    } catch(e) { alert("エラーが発生しました。"); }
+    
+    btn.disabled = false;
+    btn.textContent = "LINEと連携する";
+  }
+
+  async function registerMember() {
+    const name = document.getElementById('regName').value.trim();
+    const kana = document.getElementById('regKana').value.trim();
+    if(!name || !kana) return alert("すべての項目を入力してください。");
+    
+    const btn = document.getElementById('regBtn');
+    btn.disabled = true;
+    btn.textContent = "登録中...";
+    
+    try {
+      const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action:"registerMember", name:name, kana:kana, lineId:userProfile.userId }) });
+      const r = await res.json();
+      if(r.status === "success") { 
+        alert("登録が完了しました！続けて予約を行えます。");
+        showBooking(r.member); 
+      } else { 
+        alert(r.message); 
+      }
+    } catch(e) { alert("エラーが発生しました。"); }
+    
+    btn.disabled = false;
+    btn.textContent = "会員情報を登録する";
+  }
+
+  async function loadSlots() {
+    const d = document.getElementById('bookDate').value;
+    const s = document.getElementById('bookTime');
+    s.innerHTML = '<option value="" disabled selected>確認中...</option>';
+    
+    try {
+      const res = await fetch(`${GAS_URL}?date=${d}`);
+      const data = await res.json();
+      s.innerHTML = '<option value="" disabled selected>時間を選択してください</option>';
+      if(data.availableSlots && data.availableSlots.length > 0) {
+        data.availableSlots.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; s.appendChild(o); });
+      } else { 
+        s.innerHTML = '<option value="" disabled selected>空き枠がありません</option>'; 
+      }
+    } catch(e) { s.innerHTML = '<option value="" disabled selected>取得エラー</option>'; }
+  }
+
+  async function submitBooking() {
+    const d = document.getElementById('bookDate').value;
+    const t = document.getElementById('bookTime').value;
+    if(!d || !t) return alert("希望日と時間を選択してください。");
+    
+    const btn = document.getElementById('bookBtn');
+    btn.disabled = true;
+    btn.textContent = "送信中...";
+    
+    try {
+      const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ type:"member", memberId:memberInfo.memberId, name:memberInfo.name, lineId:userProfile.userId, date:d, time:t, menu:memberInfo.plan }) });
+      const r = await res.json();
+      if(r.status === "success") {
+        document.getElementById('statusMsg').innerHTML = '<span style="color:#2ea14c;">予約が完了しました！<br>LINEをご確認ください。</span>';
+        setTimeout(() => liff.closeWindow(), 2500);
+      } else {
+        alert("予約に失敗しました。");
+        btn.disabled = false;
+        btn.textContent = "予約を確定する";
+      }
+    } catch(e) { alert("通信エラーが発生しました。"); btn.disabled = false; btn.textContent = "予約を確定する"; }
+  }
+
+  init();
+</script>
 </body>
 </html>
