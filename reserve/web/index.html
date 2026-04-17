@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>たまフィット - 無料体験予約</title>
+  <style>
+    body { font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif; background-color: #f7f9fa; color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
+    .form-container { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); width: 100%; max-width: 450px; }
+    .header { text-align: center; margin-bottom: 25px; }
+    .header h1 { margin: 0; font-size: 24px; color: #1a1a1a; letter-spacing: 1px; }
+    .header p { font-size: 14px; color: #666; margin-top: 5px; }
+    .form-group { margin-bottom: 20px; position: relative; }
+    label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #444; }
+    
+    input[type="text"], input[type="email"], input[type="tel"] { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: #fff; -webkit-appearance: none; }
+    input:focus { outline: none; border-color: #007bff; }
+
+    .date-time-btn { width: 100%; padding: 16px; border: 1px solid #cce5ff; border-radius: 8px; font-size: 16px; font-weight: bold; color: #0056b3; background-color: #e6f2ff; text-align: center; cursor: pointer; box-sizing: border-box; -webkit-appearance: none; box-shadow: 0 3px 6px rgba(0, 123, 255, 0.15); transition: transform 0.1s, box-shadow 0.1s; }
+    .date-time-btn:active { transform: translateY(2px); box-shadow: 0 1px 2px rgba(0, 123, 255, 0.15); }
+    input[type="date"].date-time-btn::-webkit-calendar-picker-indicator { position: absolute; left: 0; top: 0; width: 100%; height: 100%; margin: 0; padding: 0; cursor: pointer; opacity: 0; }
+    select.date-time-btn { text-align-last: center; }
+
+    .arrow-indicator { display: none; text-align: center; margin: -10px 0 15px 0; animation: bounce 1.2s infinite; }
+    .arrow-indicator svg { width: 40px; height: 40px; stroke: #007bff; stroke-width: 4px; }
+    @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-12px); } 60% { transform: translateY(-6px); } }
+
+    .notes {
+      font-size: 13px; color: #d9534f; margin-bottom: 15px; text-align: center; font-weight: bold; background: #fdf0f0; padding: 12px; border-radius: 8px; border: 1px solid #f5c6cb; line-height: 1.4;
+    }
+
+    .submit-btn { width: 100%; background-color: #007bff; color: white; padding: 16px; border: none; border-radius: 8px; font-size: 17px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3); margin-top: 5px; }
+    .submit-btn:disabled { background-color: #cccccc; box-shadow: none; }
+    #result-message { margin-top: 20px; text-align: center; font-weight: bold; line-height: 1.5; }
+    .success { color: #28a745; }
+    .error { color: #dc3545; }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <div class="header">
+      <h1>たまフィット</h1>
+      <p>無料体験トレーニング予約</p>
+    </div>
+    <form id="bookingForm">
+      <div class="form-group">
+        <label for="name">お名前（フルネーム）</label>
+        <input type="text" id="name" placeholder="例：山田 太郎 / John Doe" required>
+      </div>
+      <div class="form-group">
+        <label for="kana">フリガナ（カタカナ）</label>
+        <input type="text" id="kana" placeholder="例：ヤマダ タロウ" pattern="^[ァ-ヶー\s　]+$" title="全角カタカナで入力してください" required>
+      </div>
+      <div class="form-group">
+        <div id="emailInputArea">
+          <label for="email">メールアドレス（予約確認用）</label>
+          <input type="email" id="email" placeholder="example@mail.com" required>
+        </div>
+        <div style="margin-top:10px; font-size:13px;">
+          <label style="cursor:pointer; display:inline-flex; align-items:center; font-weight:normal;">
+            <input type="checkbox" id="noEmailCheck" style="width:auto; margin:0 5px 0 0;"> メールアドレスをお持ちでない場合
+          </label>
+        </div>
+      </div>
+      <div class="form-group" id="phoneGroup" style="display:none;">
+        <label for="phone">電話番号</label>
+        <input type="tel" id="phone" placeholder="090-1234-5678" maxlength="13">
+      </div>
+      <div class="form-group">
+        <label for="date">予約希望日</label>
+        <input type="date" id="date" class="date-time-btn" required>
+      </div>
+      <div id="arrow" class="arrow-indicator">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <div class="form-group">
+        <label for="time">予約時間（60分）</label>
+        <select id="time" class="date-time-btn" required>
+          <option value="" disabled selected>希望日を先に選んでください</option>
+        </select>
+      </div>
+
+      <div class="notes">
+        ※無料体験トレーニングは、初回のお客様に限り「お一人様1回まで」とさせていただきます。
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">予約を確定する</button>
+    </form>
+    <div id="result-message"></div>
+  </div>
+
+  <script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwk--BBlH7rg_VF9WDfqlvcmloBydipwdK60CVEk1fvPunvSTvR5IkbMxNbyHhmSDuS/exec";
+
+    const noEmailCheck = document.getElementById('noEmailCheck');
+    const emailInputArea = document.getElementById('emailInputArea');
+    const emailInput = document.getElementById('email');
+    const phoneGroup = document.getElementById('phoneGroup');
+    const phoneInput = document.getElementById('phone');
+    let currentContactMethod = "メール";
+
+    noEmailCheck.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        const isOk = confirm("完了メールが届きませんがよろしいですか？\n（ご予約の確認は、スタッフからのお電話となります）");
+        if (isOk) {
+          emailInputArea.style.display = 'none'; emailInput.required = false; emailInput.value = ''; 
+          phoneGroup.style.display = 'block'; phoneInput.required = true; currentContactMethod = "電話";
+        } else { e.target.checked = false; }
+      } else {
+        emailInputArea.style.display = 'block'; emailInput.required = true;
+        phoneGroup.style.display = 'none'; phoneInput.required = false; phoneInput.value = ''; currentContactMethod = "メール";
+      }
+    });
+
+    phoneInput.addEventListener('input', function(e) {
+      let val = this.value.replace(/\D/g, ''); let formatted = val;
+      if (val.length >= 11) formatted = val.substring(0, 3) + '-' + val.substring(3, 7) + '-' + val.substring(7, 11);
+      else if (val.length >= 10) formatted = val.substring(0, 3) + '-' + val.substring(3, 7) + '-' + val.substring(7);
+      else if (val.length > 3) formatted = val.substring(0, 3) + '-' + val.substring(3);
+      this.value = formatted;
+    });
+
+    const dateInput = document.getElementById('date');
+    const timeSelect = document.getElementById('time');
+    const arrow = document.getElementById('arrow');
+
+    dateInput.addEventListener('change', async () => {
+      if (dateInput.value) {
+        arrow.style.display = 'block'; 
+        timeSelect.innerHTML = '<option value="" disabled selected>空き状況を確認中...</option>';
+        
+        try {
+          const response = await fetch(`${GAS_URL}?date=${dateInput.value}`);
+          const data = await response.json();
+          
+          if (data.availableSlots && data.availableSlots.length > 0) {
+            timeSelect.innerHTML = '<option value="" disabled selected>時間を選択してください</option>';
+            data.availableSlots.forEach(slot => {
+              const opt = document.createElement('option');
+              opt.value = slot; opt.textContent = slot;
+              timeSelect.appendChild(opt);
+            });
+          } else {
+            timeSelect.innerHTML = '<option value="" disabled selected>この日は予約がいっぱいです</option>';
+          }
+        } catch (err) {
+          timeSelect.innerHTML = '<option value="" disabled selected>取得エラーが発生しました</option>';
+        }
+
+        setTimeout(() => { timeSelect.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300);
+      }
+    });
+
+    document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn'); 
+      const msg = document.getElementById('result-message');
+      const time = document.getElementById('time').value;
+
+      if(!time) {
+        msg.className = "error"; msg.textContent = "時間を選択してください。"; return;
+      }
+
+      btn.disabled = true; btn.textContent = "送信中..."; msg.textContent = "";
+
+      const payload = {
+        mode: "trial", name: document.getElementById('name').value, kana: document.getElementById('kana').value,
+        contactMethod: currentContactMethod, email: emailInput.value, phone: phoneInput.value,
+        date: dateInput.value, time: time, duration: 60
+      };
+
+      try {
+        const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const result = await res.json();
+        if (result.status === "success") {
+          msg.className = "success"; msg.textContent = "予約が完了しました！ご登録いただいた連絡先に後ほど確認のご連絡をいたします。";
+          document.getElementById('bookingForm').reset(); arrow.style.display = 'none';
+          emailInputArea.style.display = 'block'; phoneGroup.style.display = 'none';
+        } else { msg.className = "error"; msg.textContent = result.message; }
+      } catch (err) { msg.className = "error"; msg.textContent = "通信エラーが発生しました。Web上でテストしてください。"; } 
+      finally { btn.disabled = false; btn.textContent = "予約を確定する"; }
+    });
+
+    dateInput.setAttribute('min', new Date().toISOString().split('T')[0]);
+  </script>
+</body>
+</html>

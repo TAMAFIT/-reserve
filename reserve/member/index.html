@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>たまフィット - 会員様専用予約</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f7f9fa; color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
+    .form-container { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); width: 100%; max-width: 450px; }
+    .header { text-align: center; margin-bottom: 25px; }
+    .header h1 { margin: 0; font-size: 24px; color: #1a1a1a; }
+    .welcome-msg { background: #eef9f1; border: 1px solid #c3e6cb; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: bold; }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #444; }
+    .info-box { width: 100%; padding: 14px; background-color: #f0f0f0; border-radius: 8px; font-size: 16px; box-sizing: border-box; color: #666; margin-bottom: 20px; }
+    .date-time-btn { width: 100%; padding: 16px; border: 1px solid #cce5ff; border-radius: 8px; font-size: 16px; font-weight: bold; color: #0056b3; background-color: #e6f2ff; text-align: center; cursor: pointer; }
+    .submit-btn { width: 100%; background-color: #007bff; color: white; padding: 16px; border: none; border-radius: 8px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    .submit-btn:disabled { background-color: #cccccc; }
+    #result-message { margin-top: 20px; text-align: center; font-weight: bold; }
+    .error { color: #dc3545; }
+    .loading-overlay { text-align: center; padding: 50px 0; }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <div id="loading" class="loading-overlay">会員情報を確認中...</div>
+    
+    <div id="mainForm" style="display:none;">
+      <div class="header">
+        <h1>たまフィット</h1>
+        <p>会員様専用・予約フォーム</p>
+      </div>
+
+      <div id="welcomeArea" class="welcome-msg"></div>
+
+      <form id="bookingForm">
+        <label>会員番号 / お名前</label>
+        <div id="memberDisplayName" class="info-box">取得中...</div>
+
+        <div class="form-group">
+          <label for="date">予約希望日</label>
+          <input type="date" id="date" class="date-time-btn" required>
+        </div>
+
+        <div class="form-group">
+          <label for="time">予約時間</label>
+          <select id="time" class="date-time-btn" required>
+            <option value="" disabled selected>日にちを先に選んでください</option>
+          </select>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">予約を確定する</button>
+      </form>
+      <div id="result-message"></div>
+    </div>
+    
+    <div id="errorArea" style="display:none; text-align:center;">
+      <p class="error">会員登録が確認できませんでした。</p>
+      <p>体験予約からお申し込みいただくか、スタッフにお声がけください。</p>
+    </div>
+  </div>
+
+  <script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwk--BBlH7rg_VF9WDfqlvcmloBydipwdK60CVEk1fvPunvSTvR5IkbMxNbyHhmSDuS/exec";
+    const LIFF_ID = "2009803249-QQEbOzvg";
+    
+    let memberInfo = null;
+
+    async function init() {
+      try {
+        await liff.init({ liffId: LIFF_ID });
+        if (!liff.isLoggedIn()) { liff.login(); return; }
+        
+        const profile = await liff.getProfile();
+        
+        // GASに会員情報を問い合わせる（新規追加する関数 getMemberById を呼び出す）
+        const response = await fetch(`${GAS_URL}?action=getMember&lineId=${profile.userId}`);
+        const result = await response.json();
+
+        if (result.success) {
+          memberInfo = result.member;
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('mainForm').style.display = 'block';
+          document.getElementById('welcomeArea').textContent = `${memberInfo.name} 様、お疲れ様です！`;
+          document.getElementById('memberDisplayName').textContent = `[${memberInfo.memberId}] ${memberInfo.name}`;
+        } else {
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('errorArea').style.display = 'block';
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    const dateInput = document.getElementById('date');
+    const timeSelect = document.getElementById('time');
+
+    dateInput.addEventListener('change', async () => {
+      if (dateInput.value) {
+        timeSelect.innerHTML = '<option value="" disabled selected>確認中...</option>';
+        const res = await fetch(`${GAS_URL}?date=${dateInput.value}`);
+        const data = await res.json();
+        
+        if (data.availableSlots && data.availableSlots.length > 0) {
+          timeSelect.innerHTML = '<option value="" disabled selected>時間を選択</option>';
+          data.availableSlots.forEach(slot => {
+            const opt = document.createElement('option');
+            opt.value = slot; opt.textContent = slot;
+            timeSelect.appendChild(opt);
+          });
+        } else {
+          timeSelect.innerHTML = '<option value="" disabled selected>空きがありません</option>';
+        }
+      }
+    });
+
+    document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = "送信中...";
+
+      const payload = {
+        type: "member",
+        memberId: memberInfo.memberId,
+        name: memberInfo.name,
+        lineId: memberInfo.lineId,
+        date: dateInput.value,
+        time: timeSelect.value,
+        menu: memberInfo.plan // 名簿のプランを自動適用
+      };
+
+      const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+      const result = await res.json();
+      
+      if (result.status === "success") {
+        document.getElementById('result-message').innerHTML = '<span style="color:green">予約が完了しました！<br>LINEに確認通知を送りました。</span>';
+        setTimeout(() => liff.closeWindow(), 2500);
+      } else {
+        btn.disabled = false;
+        btn.textContent = "予約を確定する";
+        alert("エラーが発生しました。");
+      }
+    });
+
+    dateInput.setAttribute('min', new Date().toISOString().split('T')[0]);
+    init();
+  </script>
+</body>
+</html>
