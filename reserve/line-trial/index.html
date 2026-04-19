@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>たまフィット - 無料体験予約</title>
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f7f9fa; color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
     .form-container { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); width: 100%; max-width: 450px; }
@@ -14,10 +14,11 @@
     label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #444; }
     input[type="text"] { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
     .date-time-btn { width: 100%; padding: 16px; border: 1px solid #cce5ff; border-radius: 8px; font-size: 16px; font-weight: bold; color: #0056b3; background-color: #e6f2ff; text-align: center; cursor: pointer; }
-    .submit-btn { width: 100%; background-color: #007bff; color: white; padding: 16px; border: none; border-radius: 8px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-    .submit-btn:disabled { background-color: #cccccc; }
+    .submit-btn { width: 100%; background-color: #007bff; color: white; padding: 16px; border: none; border-radius: 8px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+    .submit-btn:disabled { background-color: #cccccc; cursor: not-allowed; }
     .notes { font-size: 13px; color: #d9534f; margin-bottom: 15px; text-align: center; font-weight: bold; background: #fdf0f0; padding: 12px; border-radius: 8px; line-height: 1.4; }
     #result-message { margin-top: 20px; text-align: center; font-weight: bold; }
+    #loading-message { text-align: center; color: #007bff; font-weight: bold; margin-bottom: 15px; font-size: 14px; }
   </style>
 </head>
 <body>
@@ -26,6 +27,9 @@
       <h1>たまフィット</h1>
       <p>無料体験トレーニング予約</p>
     </div>
+    
+    <div id="loading-message">LINE連携の準備中です...</div>
+    
     <form id="bookingForm">
       <div class="form-group">
         <label for="name">お名前（フルネーム）</label>
@@ -46,7 +50,8 @@
         </select>
       </div>
       <div class="notes">※無料体験はお一人様1回までとなります。</div>
-      <button type="submit" class="submit-btn" id="submitBtn">予約を確定する</button>
+      
+      <button type="submit" class="submit-btn" id="submitBtn" disabled>準備中...</button>
     </form>
     <div id="result-message"></div>
   </div>
@@ -55,11 +60,34 @@
     const GAS_URL = "https://script.google.com/macros/s/AKfycbwk--BBlH7rg_VF9WDfqlvcmloBydipwdK60CVEk1fvPunvSTvR5IkbMxNbyHhmSDuS/exec";
     const LIFF_ID = "2009803249-CIxxO6HC";
     let lineProfile = null;
+    const submitBtn = document.getElementById('submitBtn');
+    const loadingMsg = document.getElementById('loading-message');
 
     async function initLIFF() {
-      await liff.init({ liffId: LIFF_ID });
-      if (liff.isLoggedIn()) { lineProfile = await liff.getProfile(); } else { liff.login(); }
+      try {
+        await liff.init({ liffId: LIFF_ID });
+        if (liff.isLoggedIn()) {
+          lineProfile = await liff.getProfile();
+          // プロファイル取得成功後にボタンを有効化
+          enableForm();
+        } else {
+          // 未ログインならLINE権限許可画面へ
+          liff.login();
+        }
+      } catch (err) {
+        console.error('LIFF Error:', err);
+        // エラー時でもブラウザからは予約できるようにボタンを有効化
+        enableForm();
+      }
     }
+
+    // ボタンを有効化する関数
+    function enableForm() {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "予約を確定する";
+      loadingMsg.style.display = "none";
+    }
+
     window.addEventListener('load', initLIFF);
 
     const dateInput = document.getElementById('date');
@@ -85,17 +113,26 @@
 
     document.getElementById('bookingForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = document.getElementById('submitBtn');
-      btn.disabled = true;
-      btn.textContent = "送信中...";
+      submitBtn.disabled = true;
+      submitBtn.textContent = "送信中...";
+
+      // 送信直前にもう一度セーフティネット（念のため取得を試みる）
+      if (!lineProfile && liff.isLoggedIn()) {
+        try {
+          lineProfile = await liff.getProfile();
+        } catch (err) {
+          console.error(err);
+        }
+      }
 
       const payload = {
         type: "trial",
         name: document.getElementById('name').value,
         kana: document.getElementById('kana').value,
-        email: "LINE予約", // メール不要のため固定値
-        lineName: lineProfile ? lineProfile.displayName : "なし",
-        lineId: lineProfile ? lineProfile.userId : "なし",
+        email: "LINE予約",
+        // 修正：「なし」という文字を撲滅し、空白（""）を送る
+        lineName: lineProfile ? lineProfile.displayName : "",
+        lineId: lineProfile ? lineProfile.userId : "",
         date: dateInput.value,
         time: timeSelect.value,
         menu: "体験希望"
@@ -107,9 +144,18 @@
         if (result.status === "success") {
           document.getElementById('result-message').innerHTML = '<span style="color:green">予約完了！LINEをご確認ください。</span>';
           setTimeout(() => { if (liff.isInClient()) liff.closeWindow(); }, 2000);
+        } else {
+          alert("予約に失敗しました: " + result.message);
+          submitBtn.disabled = false;
+          submitBtn.textContent = "予約を確定する";
         }
-      } catch (err) { alert("エラーが発生しました。"); btn.disabled = false; }
+      } catch (err) { 
+        alert("エラーが発生しました。通信環境をご確認ください。"); 
+        submitBtn.disabled = false; 
+        submitBtn.textContent = "予約を確定する";
+      }
     });
+    
     dateInput.setAttribute('min', new Date().toISOString().split('T')[0]);
   </script>
 </body>
