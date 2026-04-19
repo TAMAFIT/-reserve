@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>たまフィット - 会員様専用予約</title>
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f7f9fa; color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
     .container { background: #ffffff; padding: 30px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 450px; box-sizing: border-box; }
@@ -16,42 +16,47 @@
     .input-group { margin-bottom: 20px; }
     label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #444; }
     
-    /* 入力枠のデザイン（無料体験版に合わせてプレースホルダーを見やすく） */
     input[type="text"] { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: #fff; }
     input[type="text"]::placeholder { color: #aaa; }
     
-    /* 日付・時間のボタンスタイル（たまフィットの緑カラー版） */
     .date-time-btn { 
       width: 100%; padding: 16px; border: 1px solid #c3e6cb; border-radius: 8px; 
       font-size: 16px; font-weight: bold; color: #155724; background-color: #eef9f1; 
       text-align: center; cursor: pointer; appearance: none; box-sizing: border-box;
     }
     
-    /* ★ここをタッチ！を伝えるフワッフワッというアニメーション */
-    .pulse-anim {
-      animation: pulse 1.5s infinite;
-    }
+    .pulse-anim { animation: pulse 1.5s infinite; }
     @keyframes pulse {
       0% { box-shadow: 0 0 0 0 rgba(46, 161, 76, 0.4); }
       70% { box-shadow: 0 0 0 10px rgba(46, 161, 76, 0); }
       100% { box-shadow: 0 0 0 0 rgba(46, 161, 76, 0); }
     }
 
-    /* メインボタン */
     .btn { width: 100%; padding: 16px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; box-sizing: border-box; }
     .btn-primary { background-color: #2ea14c; color: white; box-shadow: 0 2px 6px rgba(46,161,76,0.3); margin-top: 10px; }
     .btn-primary:disabled { background-color: #a0d8b0; cursor: not-allowed; box-shadow: none; }
     .btn-outline { background-color: white; border: 2px solid #2ea14c; color: #2ea14c; margin-top: 10px; }
     
     .view-section { display: none; margin-top: 25px; padding-top: 25px; border-top: 1px dashed #ddd; }
-    #loading { text-align: center; padding: 50px 0; font-weight: bold; color: #2ea14c; }
+    
+    /* 追加：安心感を与えるローディングデザイン */
+    #loadingBox { text-align: center; padding: 40px 0; }
+    .spinner { margin: 0 auto 15px; width: 40px; height: 40px; border: 4px solid #eef9f1; border-top: 4px solid #2ea14c; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    #loadingText { font-weight: bold; color: #2ea14c; font-size: 16px; margin-bottom: 5px; }
+    .loading-sub { font-size: 12px; color: #888; }
+    
     #statusMsg { text-align: center; margin-top: 20px; font-weight: bold; font-size: 16px; }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <div id="loading">会員情報を確認中...</div>
+  <div id="loadingBox">
+    <div class="spinner"></div>
+    <div id="loadingText">システムを準備中...</div>
+    <div class="loading-sub">※初回は通信に数秒かかる場合があります</div>
+  </div>
 
   <div id="authArea" style="display:none;">
     <div class="header">
@@ -119,15 +124,24 @@
   let memberInfo = null;
 
   async function init() {
+    const loadingText = document.getElementById('loadingText');
     try {
+      loadingText.textContent = "LINEシステムと通信中...";
       await liff.init({ liffId: LIFF_ID });
-      if (!liff.isLoggedIn()) { liff.login(); return; }
+      
+      if (!liff.isLoggedIn()) { 
+        loadingText.textContent = "LINE認証画面へ移動します...";
+        liff.login(); 
+        return; 
+      }
+      
       userProfile = await liff.getProfile();
+      loadingText.textContent = "会員データを照会中...";
       
       const res = await fetch(`${GAS_URL}?action=getMember&lineId=${userProfile.userId}`);
       const result = await res.json();
       
-      document.getElementById('loading').style.display = 'none';
+      document.getElementById('loadingBox').style.display = 'none';
       
       if (result.success) {
         showBooking(result.member);
@@ -135,7 +149,7 @@
         document.getElementById('authArea').style.display = 'block';
       }
     } catch (err) {
-      alert("通信エラーが発生しました。もう一度お試しください。");
+      document.getElementById('loadingBox').innerHTML = '<div style="color:#d9534f; font-weight:bold;">通信エラーが発生しました。<br>画面を閉じて再度お試しください。</div>';
       console.error(err);
     }
   }
@@ -205,9 +219,8 @@
     const s = document.getElementById('bookTime');
     const dateInput = document.getElementById('bookDate');
     
-    // 日付が選ばれたらアニメーションを消す
     dateInput.classList.remove('pulse-anim');
-    s.classList.add('pulse-anim'); // 次は時間を選んでね、と時間枠を光らせる
+    s.classList.add('pulse-anim');
 
     s.innerHTML = '<option value="" disabled selected>確認中...</option>';
     
@@ -226,7 +239,6 @@
       s.classList.remove('pulse-anim');
     }
     
-    // 時間が選ばれたらアニメーションを消すイベントを追加
     s.addEventListener('change', () => s.classList.remove('pulse-anim'));
   }
 
@@ -246,7 +258,7 @@
         document.getElementById('statusMsg').innerHTML = '<span style="color:#2ea14c;">予約が完了しました！<br>LINEをご確認ください。</span>';
         setTimeout(() => liff.closeWindow(), 2500);
       } else {
-        alert("予約に失敗しました。");
+        alert("予約に失敗しました: " + r.message);
         btn.disabled = false;
         btn.textContent = "予約を確定する";
       }
