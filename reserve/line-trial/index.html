@@ -19,6 +19,7 @@
     .notes { font-size: 13px; color: #d9534f; margin-bottom: 15px; text-align: center; font-weight: bold; background: #fdf0f0; padding: 12px; border-radius: 8px; line-height: 1.4; }
     #result-message { margin-top: 20px; text-align: center; font-weight: bold; }
     #loading-message { text-align: center; color: #007bff; font-weight: bold; margin-bottom: 15px; font-size: 14px; }
+    .reset-btn { margin-top: 15px; background-color: #ff9800; color: white; padding: 12px 20px; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%; }
   </style>
 </head>
 <body>
@@ -63,28 +64,42 @@
     const submitBtn = document.getElementById('submitBtn');
     const loadingMsg = document.getElementById('loading-message');
 
+    // ★最強の復旧装置：古いキャッシュを完全破壊してリロードする
+    function forceReset() {
+      localStorage.clear();
+      sessionStorage.clear();
+      alert("古いLINEの連携データを消去しました。\nOKを押すと再読み込みして正常に起動します。");
+      window.location.reload();
+    }
+
     async function initLIFF() {
+      // 5秒間画面が固まったら、手動の脱出ボタンを出す（無限フリーズ防止）
+      const timeoutId = setTimeout(() => {
+        loadingMsg.style.color = "#d9534f";
+        loadingMsg.innerHTML = "読み込みが止まっているようです。<br><button type='button' class='reset-btn' onclick='forceReset()'>🔄 ここを押して不具合を直す</button>";
+      }, 5000);
+
       try {
         await liff.init({ liffId: LIFF_ID });
-        
+
         if (liff.isLoggedIn()) {
           try {
             lineProfile = await liff.getProfile();
+            clearTimeout(timeoutId); // 無事に取得できたら脱出ボタンのタイマーを止める
             enableForm();
           } catch (profileError) {
-            // ★ここが超重要：プロファイル取得でエラー（revoked等）が出たら、古いキャッシュを強制削除してログインし直す
-            console.warn('Profile Error (Token may be revoked):', profileError);
-            liff.logout(); 
-            liff.login(); 
+            // トークン失効等のエラーが出たら、問答無用で強制リセット
+            clearTimeout(timeoutId);
+            forceReset();
           }
         } else {
-          // ログインしていない場合はログイン画面へ
+          clearTimeout(timeoutId);
           liff.login();
         }
       } catch (err) {
-        console.error('LIFF Init Error:', err);
-        loadingMsg.style.color = "#d9534f";
-        loadingMsg.innerHTML = "システムエラーが発生しました。<br>画面を一度閉じて、開き直してください。";
+        // 初期化自体に失敗した場合も強制リセット
+        clearTimeout(timeoutId);
+        forceReset();
       }
     }
 
@@ -96,7 +111,7 @@
 
     window.addEventListener('load', initLIFF);
 
-    // カレンダーの空き時間取得ロジック（変更なし）
+    // カレンダー空き時間取得
     const dateInput = document.getElementById('date');
     const timeSelect = document.getElementById('time');
 
@@ -118,17 +133,12 @@
       }
     });
 
-    // 送信処理（不要なリトライ機能を取り除き、シンプルで頑丈な構造に）
+    // 送信処理
     document.getElementById('bookingForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
       submitBtn.disabled = true;
       submitBtn.textContent = "送信中...";
-
-      // 念のための再確認（ここでエラーが起きても止まらないようにする）
-      if (!lineProfile && liff.isLoggedIn()) {
-        try { lineProfile = await liff.getProfile(); } catch (e) { console.warn("最終確認でもプロファイル取得不可"); }
-      }
 
       const payload = {
         type: "trial",
