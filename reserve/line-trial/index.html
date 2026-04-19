@@ -29,7 +29,7 @@
       <p>無料体験トレーニング予約</p>
     </div>
     
-    <div id="loading-message">LINE連携を準備中です...</div>
+    <div id="loading-message">LINE連携を確認中です...</div>
     
     <form id="bookingForm">
       <div class="form-group">
@@ -64,54 +64,54 @@
     const submitBtn = document.getElementById('submitBtn');
     const loadingMsg = document.getElementById('loading-message');
 
-    // ★最強の復旧装置：古いキャッシュを完全破壊してリロードする
     function forceReset() {
       localStorage.clear();
       sessionStorage.clear();
-      alert("古いLINEの連携データを消去しました。\nOKを押すと再読み込みして正常に起動します。");
+      alert("データをリセットしました。再読み込みします。");
       window.location.reload();
     }
 
     async function initLIFF() {
-      // 5秒間画面が固まったら、手動の脱出ボタンを出す（無限フリーズ防止）
+      // 5秒経ってもぐるぐるしていたら、強制的に予約ボタンを有効化する（逃げ道）
       const timeoutId = setTimeout(() => {
-        loadingMsg.style.color = "#d9534f";
-        loadingMsg.innerHTML = "読み込みが止まっているようです。<br><button type='button' class='reset-btn' onclick='forceReset()'>🔄 ここを押して不具合を直す</button>";
+        console.warn("LIFF init timed out. Enabling form anyway.");
+        loadingMsg.innerHTML = "LINE連携に時間がかかっています。<br><button type='button' class='reset-btn' onclick='forceReset()'>🔄 解決しない場合はここをタップ</button>";
+        enableForm(); 
       }, 5000);
 
       try {
         await liff.init({ liffId: LIFF_ID });
-
         if (liff.isLoggedIn()) {
           try {
             lineProfile = await liff.getProfile();
-            clearTimeout(timeoutId); // 無事に取得できたら脱出ボタンのタイマーを止める
-            enableForm();
-          } catch (profileError) {
-            // トークン失効等のエラーが出たら、問答無用で強制リセット
-            clearTimeout(timeoutId);
-            forceReset();
+          } catch (e) {
+            console.warn("Profile fetch failed:", e);
           }
+          clearTimeout(timeoutId);
+          enableForm();
         } else {
           clearTimeout(timeoutId);
           liff.login();
         }
       } catch (err) {
-        // 初期化自体に失敗した場合も強制リセット
+        console.error('LIFF Error:', err);
         clearTimeout(timeoutId);
-        forceReset();
+        enableForm(); // エラーでも予約自体はできるようにする
       }
     }
 
     function enableForm() {
       submitBtn.disabled = false;
       submitBtn.textContent = "予約を確定する";
-      loadingMsg.style.display = "none";
+      loadingMsg.style.display = (lineProfile) ? "none" : "block";
+      if(!lineProfile) {
+        loadingMsg.style.color = "#888";
+        loadingMsg.textContent = "※LINE通知用IDが取得できませんでしたが、予約は可能です。";
+      }
     }
 
     window.addEventListener('load', initLIFF);
 
-    // カレンダー空き時間取得
     const dateInput = document.getElementById('date');
     const timeSelect = document.getElementById('time');
 
@@ -133,10 +133,8 @@
       }
     });
 
-    // 送信処理
     document.getElementById('bookingForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      
       submitBtn.disabled = true;
       submitBtn.textContent = "送信中...";
 
@@ -145,7 +143,7 @@
         name: document.getElementById('name').value,
         kana: document.getElementById('kana').value,
         email: "LINE予約",
-        lineName: lineProfile ? lineProfile.displayName : "",
+        lineName: lineProfile ? lineProfile.displayName : "取得失敗",
         lineId: lineProfile ? lineProfile.userId : "",
         date: dateInput.value,
         time: timeSelect.value,
@@ -156,14 +154,14 @@
         const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
         const result = await res.json();
         if (result.status === "success") {
-          document.getElementById('result-message').innerHTML = '<span style="color:green">予約完了！LINEをご確認ください。</span>';
+          document.getElementById('result-message').innerHTML = '<span style="color:green">予約完了！</span>';
           setTimeout(() => { if (liff.isInClient()) liff.closeWindow(); }, 2000);
         } else {
-          alert("予約に失敗しました: " + result.message);
+          alert("失敗: " + result.message);
           enableForm();
         }
       } catch (err) { 
-        alert("エラーが発生しました。通信環境をご確認ください。"); 
+        alert("通信エラーが発生しました。"); 
         enableForm();
       }
     });
