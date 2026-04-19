@@ -36,10 +36,10 @@
     .btn-primary { background-color: #2ea14c; color: white; box-shadow: 0 2px 6px rgba(46,161,76,0.3); margin-top: 10px; }
     .btn-primary:disabled { background-color: #a0d8b0; cursor: not-allowed; box-shadow: none; }
     .btn-outline { background-color: white; border: 2px solid #2ea14c; color: #2ea14c; margin-top: 10px; }
+    .reset-btn { background-color: #ff9800; color: white; margin-top: 15px; } /* リセットボタン用 */
     
     .view-section { display: none; margin-top: 25px; padding-top: 25px; border-top: 1px dashed #ddd; }
     
-    /* 追加：安心感を与えるローディングデザイン */
     #loadingBox { text-align: center; padding: 40px 0; }
     .spinner { margin: 0 auto 15px; width: 40px; height: 40px; border: 4px solid #eef9f1; border-top: 4px solid #2ea14c; border-radius: 50%; animation: spin 1s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -123,24 +123,50 @@
   let userProfile = null;
   let memberInfo = null;
 
+  // ★最強の復旧装置（キャッシュクリア＆リロード）
+  function forceReset() {
+    localStorage.clear();
+    sessionStorage.clear();
+    alert("古いLINEの連携データを消去しました。\nOKを押すと再読み込みして正常に起動します。");
+    window.location.reload();
+  }
+
   async function init() {
     const loadingText = document.getElementById('loadingText');
+    const loadingBox = document.getElementById('loadingBox');
+
+    // ★安全装置：5秒固まったら手動脱出ボタンを出す
+    const timeoutId = setTimeout(() => {
+      loadingBox.innerHTML = '<div style="color:#d9534f; font-weight:bold; margin-bottom:15px;">読み込みが止まっているようです。</div><button type="button" class="btn reset-btn" onclick="forceReset()">🔄 ここを押して不具合を直す</button>';
+    }, 5000);
+
     try {
       loadingText.textContent = "LINEシステムと通信中...";
       await liff.init({ liffId: LIFF_ID });
       
       if (!liff.isLoggedIn()) { 
+        clearTimeout(timeoutId);
         loadingText.textContent = "LINE認証画面へ移動します...";
         liff.login(); 
         return; 
       }
       
-      userProfile = await liff.getProfile();
+      // ★エラー検知の要：ここでID取得に失敗したら、すぐさまリセットを発動
+      try {
+        userProfile = await liff.getProfile();
+      } catch (profileError) {
+        clearTimeout(timeoutId);
+        console.warn('Profile Error (Token Revoked):', profileError);
+        forceReset();
+        return;
+      }
+
       loadingText.textContent = "会員データを照会中...";
       
       const res = await fetch(`${GAS_URL}?action=getMember&lineId=${userProfile.userId}`);
       const result = await res.json();
       
+      clearTimeout(timeoutId);
       document.getElementById('loadingBox').style.display = 'none';
       
       if (result.success) {
@@ -149,8 +175,10 @@
         document.getElementById('authArea').style.display = 'block';
       }
     } catch (err) {
-      document.getElementById('loadingBox').innerHTML = '<div style="color:#d9534f; font-weight:bold;">通信エラーが発生しました。<br>画面を閉じて再度お試しください。</div>';
-      console.error(err);
+      clearTimeout(timeoutId);
+      console.error('LIFF Init Error:', err);
+      // 通信エラー（完全にネットが切れている等）でもリセットを試みる
+      forceReset();
     }
   }
 
