@@ -119,32 +119,35 @@
   let memberInfo = null;
 
   async function init() {
-    const loadingText = document.getElementById('loadingText');
     const loadingBox = document.getElementById('loadingBox');
+    
+    // ★最強の脱出タイマー：5秒経っても終わらなければ、問答無用でログイン画面を出す
+    const fallbackTimer = setTimeout(() => {
+      console.warn("LINE init timed out. Forcing auth screen.");
+      loadingBox.style.display = 'none';
+      document.getElementById('authArea').style.display = 'block';
+    }, 5000);
 
     try {
-      loadingText.textContent = "LINEシステムと通信中...";
       await liff.init({ liffId: LIFF_ID });
       
       if (!liff.isLoggedIn()) { 
+        clearTimeout(fallbackTimer); // 正常に動いたらタイマー解除
         liff.login(); 
         return; 
       }
       
-      // ★改善：ID取得に失敗しても「無視して」次の処理へ進む
       try {
         userProfile = await liff.getProfile();
       } catch (e) {
         console.warn('ID取得スキップ:', e);
       }
-
-      loadingText.textContent = "会員データを照会中...";
       
-      // IDが取れていれば照合、取れていなければ強制的にログイン画面へ
       let lineIdParam = userProfile ? userProfile.userId : "none";
       const res = await fetch(`${GAS_URL}?action=getMember&lineId=${lineIdParam}`);
       const result = await res.json();
       
+      clearTimeout(fallbackTimer); // 全て正常に終わったらタイマー解除
       loadingBox.style.display = 'none';
       
       if (result.success) {
@@ -154,6 +157,7 @@
       }
     } catch (err) {
       console.error('最終エラー:', err);
+      clearTimeout(fallbackTimer);
       loadingBox.style.display = 'none';
       document.getElementById('authArea').style.display = 'block';
     }
