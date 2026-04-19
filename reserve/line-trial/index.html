@@ -16,7 +16,6 @@
     .date-time-btn { width: 100%; padding: 16px; border: 1px solid #cce5ff; border-radius: 8px; font-size: 16px; font-weight: bold; color: #0056b3; background-color: #e6f2ff; text-align: center; cursor: pointer; }
     .submit-btn { width: 100%; background-color: #007bff; color: white; padding: 16px; border: none; border-radius: 8px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
     .submit-btn:disabled { background-color: #cccccc; cursor: not-allowed; }
-    .retry-btn { background-color: #ff9800; } /* 再取得ボタンの色 */
     .notes { font-size: 13px; color: #d9534f; margin-bottom: 15px; text-align: center; font-weight: bold; background: #fdf0f0; padding: 12px; border-radius: 8px; line-height: 1.4; }
     #result-message { margin-top: 20px; text-align: center; font-weight: bold; }
     #loading-message { text-align: center; color: #007bff; font-weight: bold; margin-bottom: 15px; font-size: 14px; }
@@ -29,7 +28,7 @@
       <p>無料体験トレーニング予約</p>
     </div>
     
-    <div id="loading-message">LINE連携の準備中です...</div>
+    <div id="loading-message">LINE連携を準備中です...</div>
     
     <form id="bookingForm">
       <div class="form-group">
@@ -63,48 +62,41 @@
     let lineProfile = null;
     const submitBtn = document.getElementById('submitBtn');
     const loadingMsg = document.getElementById('loading-message');
-    let isRetryMode = false; // 再取得モードかどうかの判定
 
     async function initLIFF() {
       try {
         await liff.init({ liffId: LIFF_ID });
+        
         if (liff.isLoggedIn()) {
-          lineProfile = await liff.getProfile();
-          enableForm();
+          try {
+            lineProfile = await liff.getProfile();
+            enableForm();
+          } catch (profileError) {
+            // ★ここが超重要：プロファイル取得でエラー（revoked等）が出たら、古いキャッシュを強制削除してログインし直す
+            console.warn('Profile Error (Token may be revoked):', profileError);
+            liff.logout(); 
+            liff.login(); 
+          }
         } else {
+          // ログインしていない場合はログイン画面へ
           liff.login();
         }
       } catch (err) {
-        // ★調査用アラートを追加（エラー原因を特定するため）
-        alert("【システム通知】LINE情報の取得に失敗しました。\n理由: " + err + "\n\nもう一度ボタンを押して再取得をお試しください。");
-        console.error('LIFF Error:', err);
-        enableRetryMode(); // エラー時は再取得モードにする
+        console.error('LIFF Init Error:', err);
+        loadingMsg.style.color = "#d9534f";
+        loadingMsg.innerHTML = "システムエラーが発生しました。<br>画面を一度閉じて、開き直してください。";
       }
     }
 
-    // 通常の予約ボタンを有効化する
     function enableForm() {
-      isRetryMode = false;
-      submitBtn.classList.remove('retry-btn');
       submitBtn.disabled = false;
       submitBtn.textContent = "予約を確定する";
       loadingMsg.style.display = "none";
-      document.getElementById('result-message').innerHTML = "";
-    }
-
-    // エラー時の「再取得ボタン」にする
-    function enableRetryMode() {
-      isRetryMode = true;
-      submitBtn.classList.add('retry-btn');
-      submitBtn.disabled = false;
-      submitBtn.textContent = "LINE情報を再取得する";
-      loadingMsg.style.display = "block";
-      loadingMsg.style.color = "#d9534f";
-      loadingMsg.textContent = "LINE連携が完了していません。";
     }
 
     window.addEventListener('load', initLIFF);
 
+    // カレンダーの空き時間取得ロジック（変更なし）
     const dateInput = document.getElementById('date');
     const timeSelect = document.getElementById('time');
 
@@ -126,39 +118,16 @@
       }
     });
 
+    // 送信処理（不要なリトライ機能を取り除き、シンプルで頑丈な構造に）
     document.getElementById('bookingForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      // ★再取得モードの場合の処理（予約は送らず、ID取得だけをやり直す）
-      if (isRetryMode) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = "再取得中...";
-        try {
-          if (!liff.isLoggedIn()) {
-            liff.login();
-            return;
-          }
-          lineProfile = await liff.getProfile();
-          alert("LINE情報の取得に成功しました！\n「予約を確定する」ボタンを押してください。");
-          enableForm(); // 成功したら通常の予約ボタンに戻す
-        } catch (err) {
-          alert("再取得に失敗しました。LINEアプリを再起動してみてください。\n" + err);
-          enableRetryMode();
-        }
-        return; // ここで処理を止める（予約通信に行かせない）
-      }
-
-      // ★ここから下は通常の予約処理
+      
       submitBtn.disabled = true;
       submitBtn.textContent = "送信中...";
 
-      // 万が一の保険
+      // 念のための再確認（ここでエラーが起きても止まらないようにする）
       if (!lineProfile && liff.isLoggedIn()) {
-        try {
-          lineProfile = await liff.getProfile();
-        } catch (err) {
-          console.error("最終取得エラー:", err);
-        }
+        try { lineProfile = await liff.getProfile(); } catch (e) { console.warn("最終確認でもプロファイル取得不可"); }
       }
 
       const payload = {
