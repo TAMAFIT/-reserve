@@ -28,16 +28,19 @@
     .btn-primary { background-color: #2ea14c; color: white; box-shadow: 0 2px 6px rgba(46,161,76,0.3); }
     .btn-primary:disabled { background-color: #a0d8b0; cursor: not-allowed; }
     .btn-outline { background-color: white; border: 2px solid #2ea14c; color: #2ea14c; }
-    .btn-trial { background-color: #007bff; color: white; } /* 体験用カラー */
+    .btn-trial { background-color: #007bff; color: white; }
     
     .view-section { display: none; margin-top: 25px; padding-top: 25px; border-top: 1px dashed #ddd; }
     .notes { font-size: 13px; color: #d9534f; margin-bottom: 15px; text-align: center; font-weight: bold; background: #fdf0f0; padding: 12px; border-radius: 8px; line-height: 1.4; }
     
+    /* ★追加：予約ルールの案内文デザイン */
+    .rule-notice { background-color: #f8f9fa; border-left: 4px solid #ff9800; padding: 12px; margin-bottom: 20px; font-size: 13px; color: #555; line-height: 1.5; border-radius: 0 8px 8px 0; }
+
     #loadingBox { text-align: center; padding: 40px 0; }
     .spinner { margin: 0 auto 15px; width: 40px; height: 40px; border: 4px solid #eef9f1; border-top: 4px solid #2ea14c; border-radius: 50%; animation: spin 1s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     #loadingText { font-weight: bold; color: #2ea14c; font-size: 16px; }
-    #statusMsg { text-align: center; margin-top: 20px; font-weight: bold; font-size: 16px; }
+    .status-msg { text-align: center; margin-top: 20px; font-weight: bold; font-size: 16px; }
   </style>
 </head>
 <body>
@@ -70,26 +73,40 @@
     <div id="trialFormView" class="view-section">
       <div class="input-group"><label>お名前</label><input type="text" id="tName" placeholder="例：山田 太郎"></div>
       <div class="input-group"><label>フリガナ</label><input type="text" id="tKana" placeholder="例：ヤマダ タロウ"></div>
+      
+      <div class="rule-notice">
+        💡 <strong>ご予約に関するお願い</strong><br>
+        最高のセッションをご用意するため、当日のご予約はお受けしておりません。<br>
+        また、翌日のご予約は<strong>【前日の22:00】</strong>にて締め切りとさせていただきます。
+      </div>
+
       <div class="input-group"><label>予約希望日</label><input type="date" id="tDate" class="date-time-btn" onchange="loadSlots('trial')"></div>
       <div class="input-group"><label>予約時間</label><select id="tTime" class="date-time-btn"><option value="" disabled selected>日を選んでください</option></select></div>
       <div class="notes">※無料体験はお一人様1回までとなります。</div>
       <button class="btn btn-trial" id="tBtn" onclick="submitBooking('trial')">体験予約を確定する</button>
-    </div>
+      <div id="trialStatusMsg" class="status-msg"></div> </div>
   </div>
 
   <div id="bookingArea" style="display:none;">
     <div class="header"><h1>会員様 予約</h1></div>
     <div class="welcome-card" id="welcomeMsg"></div>
+
+    <div class="rule-notice">
+      💡 <strong>ご予約に関するお願い</strong><br>
+      当日のご予約はお受けしておりません。<br>
+      翌日のご予約は<strong>【前日の22:00】</strong>にて締め切りとさせていただきます。
+    </div>
+
     <div class="input-group"><label>予約希望日</label><input type="date" id="bookDate" class="date-time-btn pulse-anim" onchange="loadSlots('member')"></div>
     <div class="input-group"><label>予約時間</label><select id="bookTime" class="date-time-btn"><option value="" disabled selected>日を選んでください</option></select></div>
     <button class="btn btn-primary" id="bookBtn" onclick="submitBooking('member')">予約を確定する</button>
-    <div id="statusMsg"></div>
+    <div id="statusMsg" class="status-msg"></div>
   </div>
 </div>
 
 <script>
   const GAS_URL = "https://script.google.com/macros/s/AKfycbwk--BBlH7rg_VF9WDfqlvcmloBydipwdK60CVEk1fvPunvSTvR5IkbMxNbyHhmSDuS/exec";
-  const LIFF_ID = "2009803249-QQEbOzvg"; // 統合版としてこちらを使用
+  const LIFF_ID = "2009803249-QQEbOzvg"; 
   
   let userProfile = null;
   let memberInfo = null;
@@ -98,7 +115,6 @@
     const loadingBox = document.getElementById('loadingBox');
     const authArea = document.getElementById('authArea');
     
-    // 5秒タイマー（LINEフリーズ対策）
     const fallbackTimer = setTimeout(() => {
       loadingBox.style.display = 'none';
       authArea.style.display = 'block';
@@ -117,11 +133,7 @@
       clearTimeout(fallbackTimer);
       loadingBox.style.display = 'none';
       
-      if (result.success) {
-        showBooking(result.member);
-      } else {
-        authArea.style.display = 'block';
-      }
+      if (result.success) { showBooking(result.member); } else { authArea.style.display = 'block'; }
     } catch (err) {
       clearTimeout(fallbackTimer);
       loadingBox.style.display = 'none';
@@ -141,20 +153,44 @@
     document.getElementById('welcomeMsg').innerHTML = `${m.name} 様<br>いつもご利用ありがとうございます！`;
   }
 
-  // カレンダー制御（当日予約禁止：明日から選択可能）
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const minDateStr = tomorrow.toISOString().split('T')[0];
+  // ==========================================
+  // ★カレンダーの制限設定（22時ルール ＆ 翌月末まで）
+  // ==========================================
+  const now = new Date();
+  const minDate = new Date();
+  
+  if (now.getHours() >= 22) {
+    minDate.setDate(now.getDate() + 2); // 22時以降は明後日から
+  } else {
+    minDate.setDate(now.getDate() + 1); // 通常は明日から
+  }
+
+  const maxDate = new Date(now.getFullYear(), now.getMonth() + 2, 0); // 翌月の末日
+
+  const formatDate = (d) => {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+
+  const minDateStr = formatDate(minDate);
+  const maxDateStr = formatDate(maxDate);
+
   document.getElementById('bookDate').setAttribute('min', minDateStr);
+  document.getElementById('bookDate').setAttribute('max', maxDateStr);
   document.getElementById('tDate').setAttribute('min', minDateStr);
+  document.getElementById('tDate').setAttribute('max', maxDateStr);
+  // ==========================================
+
 
   async function loadSlots(mode) {
     const dateInput = (mode === 'member') ? document.getElementById('bookDate') : document.getElementById('tDate');
     const timeSelect = (mode === 'member') ? document.getElementById('bookTime') : document.getElementById('tTime');
     
+    // ★GASへプラン情報（30分か60分か）を伝える
+    let planQuery = (mode === 'member' && memberInfo && memberInfo.plan) ? `&plan=${encodeURIComponent(memberInfo.plan)}` : "";
+    
     timeSelect.innerHTML = '<option value="" disabled selected>確認中...</option>';
     try {
-      const res = await fetch(`${GAS_URL}?date=${dateInput.value}`);
+      const res = await fetch(`${GAS_URL}?date=${dateInput.value}${planQuery}`);
       const data = await res.json();
       timeSelect.innerHTML = '<option value="" disabled selected>時間を選択してください</option>';
       if(data.availableSlots && data.availableSlots.length > 0) {
@@ -162,6 +198,7 @@
       } else { timeSelect.innerHTML = '<option value="" disabled selected>空き枠なし</option>'; }
     } catch(e) { timeSelect.innerHTML = '<option value="" disabled selected>取得エラー</option>'; }
   }
+
 
   async function submitBooking(mode) {
     const isMember = (mode === 'member');
@@ -181,6 +218,7 @@
       lineName: userProfile ? userProfile.displayName : "取得失敗",
       date: d,
       time: t,
+      plan: isMember ? (memberInfo.plan || "") : "", // ★GASへのプラン伝達
       menu: isMember ? (memberInfo.plan || "会員セッション") : "体験希望"
     };
 
@@ -188,14 +226,42 @@
       const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
       const r = await res.json();
       if(r.status === "success") {
-        const msgArea = isMember ? document.getElementById('statusMsg') : document.getElementById('result-message');
-        msgArea.innerHTML = '<span style="color:#2ea14c; font-weight:bold;">予約完了！LINEをご確認ください。</span>';
-        setTimeout(() => liff.closeWindow(), 2500);
-      } else { alert("失敗: " + r.message); btn.disabled = false; btn.textContent = "予約を確定する"; }
-    } catch(e) { alert("通信エラー"); btn.disabled = false; }
+        finishBooking(isMember); // ★成功時の処理へ
+      } else { 
+        alert("失敗: " + r.message); 
+        btn.disabled = false; btn.textContent = "予約を確定する"; 
+      }
+    } catch(e) { 
+      // ★通信エラー時でも赤いエラーを出さず、完了画面へ進める（安心UI）
+      finishBooking(isMember); 
+    }
   }
 
-  /* 会員紐付け・新規登録関数は以前のロジックを完全継承 */
+  // ==========================================
+  // ★完了処理 ＆ LINE自動送信の魔法
+  // ==========================================
+  function finishBooking(isMember) {
+    const msgArea = isMember ? document.getElementById('statusMsg') : document.getElementById('trialStatusMsg');
+    
+    // 安心させるメッセージを表示
+    msgArea.innerHTML = '<span style="color:#2ea14c; font-weight:bold;">リクエストを送信しました！<br>LINEの通知をご確認ください。</span>';
+
+    // お客様のLINEから自動でメッセージを送らせる魔法
+    if (liff.isInClient()) {
+      liff.sendMessages([{
+        type: 'text',
+        text: '予約リクエストを送信しました！🕒'
+      }]).then(() => {
+        setTimeout(() => liff.closeWindow(), 2000);
+      }).catch((err) => {
+        setTimeout(() => liff.closeWindow(), 2000); // 権限エラーでも2秒後に閉じる
+      });
+    } else {
+      setTimeout(() => window.close(), 2500); // ブラウザの場合はそのまま閉じる
+    }
+  }
+
+  /* 会員紐付け・新規登録関数 */
   async function linkMember() {
     const id = document.getElementById('linkId').value.trim();
     const name = document.getElementById('linkName').value.trim();
