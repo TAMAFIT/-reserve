@@ -62,47 +62,45 @@
     label { display: flex; align-items: center; gap: 4px; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #333; }
     .icon-label { color: #2ea14c; font-size: 18px; }
     
-    /* ★ 入力欄の基本スタイル */
     input[type="text"], input[type="email"] { 
       width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: rgba(255, 255, 255, 0.95); font-family: inherit; transition: 0.3s;
     }
     input:focus, select:focus { outline: none; border-color: #2ea14c; box-shadow: 0 0 0 3px rgba(46,161,76,0.2); }
     
-    /* ★ カスタムカレンダー＆プルダウンのデザイン（Androidバグ完全対応版） */
+    /* ★ はみ出しバグ修正済みのカレンダー＆プルダウン設定 */
     .date-time-btn { 
       width: 100%; 
-      padding: 16px 40px 16px 16px; /* 右側にアイコン用の余白を確保 */
+      padding: 16px 40px 16px 16px; 
       border: 1px solid #c3e6cb; 
       border-radius: 8px; 
       font-size: 16px; 
       font-weight: bold; 
       color: #155724; 
       background-color: rgba(238, 249, 241, 0.9); 
-      text-align: left; /* 中央寄せから左寄せに変更して文字切れを防ぐ */
+      text-align: left; 
       cursor: pointer; 
-      appearance: none; /* ブラウザ標準のダサい矢印やカレンダーアイコンを消す */
+      appearance: none; 
       -webkit-appearance: none;
       font-family: inherit; 
       position: relative;
+      box-sizing: border-box; /* ←★ ここがはみ出しを防ぐ絶対命令です！ */
     }
     
-    /* Androidなどで日付が空の時に「年/月/日」をプレースホルダーとして強制表示 */
     input[type="date"]::before {
       content: attr(data-placeholder);
       width: 100%;
       color: #155724;
     }
     input[type="date"]:valid::before {
-      display: none; /* 日付が入力されたらプレースホルダーを消す */
+      display: none; 
     }
 
-    /* 右側に配置する共通アイコンのスタイル */
     .input-icon-right {
       position: absolute;
       right: 15px;
-      top: 42px; /* ラベルの高さ分ずらす */
+      top: 42px; 
       color: #2ea14c;
-      pointer-events: none; /* アイコンの上からでもクリック可能にする */
+      pointer-events: none; 
       font-size: 22px;
     }
     
@@ -385,13 +383,6 @@
       targetForm.style.display = 'block';
       setTimeout(() => targetForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
     }
-  }
-
-  function showView(v) {
-    const allForms = document.querySelectorAll('.view-section');
-    allForms.forEach(f => {
-      f.style.display = (f.id === v ? 'block' : 'none');
-    });
   }
 
   function showBooking(m) {
