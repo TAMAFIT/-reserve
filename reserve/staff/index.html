@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>たまフィット - スタッフ代行予約</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+      background: #f5f7f8;
+      color: #222;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      padding: 28px;
+      box-sizing: border-box;
+    }
+
+    .header {
+      border-bottom: 3px solid #2ea14c;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+
+    .header p {
+      margin: 8px 0 0;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      font-size: 14px;
+      color: #333;
+    }
+
+    input,
+    select {
+      width: 100%;
+      box-sizing: border-box;
+      border: 2px solid #e0e4e7;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 16px;
+      background: #fff;
+      color: #222;
+    }
+
+    input[type="date"] {
+      position: relative;
+      text-align: center;
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+      -webkit-user-select: none;
+      user-select: none;
+      caret-color: transparent;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      cursor: pointer;
+      opacity: 0;
+    }
+
+    .date-input-wrap {
+      position: relative;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .date-input-wrap input[type="date"] {
+      padding-right: 44px;
+    }
+
+    .date-display {
+      position: absolute;
+      left: 14px;
+      right: 44px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+      color: #222;
+      font-size: 16px;
+      line-height: 1.4;
+      pointer-events: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .date-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #2ea14c;
+      font-size: 22px;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: #2ea14c;
+      box-shadow: 0 0 0 3px rgba(46, 161, 76, 0.15);
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 8px;
+      padding: 15px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+
+    button:disabled {
+      background: #c9d4ce;
+      color: #fff;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: #2ea14c;
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: #155724;
+      color: #fff;
+    }
+
+    .btn-outline {
+      background: #fff;
+      color: #2ea14c;
+      border: 2px solid #2ea14c;
+    }
+
+    .member-card {
+      display: none;
+      background: #eef9f1;
+      border: 1px solid #c3e6cb;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 20px 0;
+      line-height: 1.7;
+    }
+
+    .member-card strong {
+      color: #155724;
+    }
+
+    .booking-area {
+      display: none;
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid #e4e8ea;
+    }
+
+    .message {
+      margin-top: 18px;
+      text-align: center;
+      font-weight: bold;
+      line-height: 1.6;
+      white-space: pre-line;
+    }
+
+    .success {
+      color: #16823a;
+    }
+
+    .error {
+      color: #dc3545;
+    }
+
+    .note {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="header">
+      <h1>スタッフ代行予約</h1>
+      <p>会員番号で本会員の予約を作成します</p>
+    </div>
+
+    <div class="form-group">
+      <label for="staffPassword">スタッフパスワード</label>
+      <input type="password" id="staffPassword" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="4桁のパスワード">
+    </div>
+
+    <div class="form-group">
+      <label for="memberId">会員番号</label>
+      <input type="text" id="memberId" inputmode="numeric" autocomplete="off" placeholder="例: 25120001">
+    </div>
+
+    <button type="button" class="btn-outline" id="checkMemberBtn">会員を確認する</button>
+
+    <section class="member-card" id="memberCard">
+      <div><strong>会員番号:</strong> <span id="memberIdText"></span></div>
+      <div><strong>お名前:</strong> <span id="memberNameText"></span></div>
+      <div><strong>プラン:</strong> <span id="memberPlanText"></span></div>
+      <div><strong>LINE連携:</strong> <span id="memberLineText"></span></div>
+      <p class="note" id="lineNote"></p>
+    </section>
+
+    <section class="booking-area" id="bookingArea">
+      <div class="form-group">
+        <label for="date">予約日</label>
+        <div class="date-input-wrap">
+          <input type="date" id="date">
+          <span class="date-display" id="dateDisplay">日付を選択してください</span>
+          <i class="material-icons-round date-icon">calendar_month</i>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="time">予約時間</label>
+        <select id="time">
+          <option value="" disabled selected>日付を選択してください</option>
+        </select>
+      </div>
+
+      <button type="button" class="btn-primary" id="submitBtn">この内容で代行予約する</button>
+    </section>
+
+    <div class="message" id="message"></div>
+  </main>
+
+  <script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwk--BBlH7rg_VF9WDfqlvcmloBydipwdK60CVEk1fvPunvSTvR5IkbMxNbyHhmSDuS/exec";
+
+    const staffPasswordInput = document.getElementById("staffPassword");
+    const memberIdInput = document.getElementById("memberId");
+    const checkMemberBtn = document.getElementById("checkMemberBtn");
+    const memberCard = document.getElementById("memberCard");
+    const bookingArea = document.getElementById("bookingArea");
+    const dateInput = document.getElementById("date");
+    const timeSelect = document.getElementById("time");
+    const submitBtn = document.getElementById("submitBtn");
+    const message = document.getElementById("message");
+    const PASSWORD_STORAGE_KEY = "tamafit_staff_password";
+
+    let selectedMember = null;
+
+    function setMessage(text, type) {
+      message.textContent = text;
+      message.className = "message " + (type || "");
+    }
+
+    function setLoading(button, isLoading, textWhenLoading, textWhenReady) {
+      button.disabled = isLoading;
+      button.textContent = isLoading ? textWhenLoading : textWhenReady;
+    }
+
+    function getStaffPassword() {
+      return staffPasswordInput.value.trim();
+    }
+
+    function loadSavedStaffPassword() {
+      try {
+        staffPasswordInput.value = localStorage.getItem(PASSWORD_STORAGE_KEY) || "";
+      } catch (err) {
+        localStorage.removeItem(PASSWORD_STORAGE_KEY);
+      }
+    }
+
+    function saveStaffPassword(password) {
+      if (!password || password.length !== 4) return;
+      localStorage.setItem(PASSWORD_STORAGE_KEY, password);
+    }
+
+    function clearSavedStaffPassword() {
+      localStorage.removeItem(PASSWORD_STORAGE_KEY);
+    }
+
+    function getMemberId() {
+      return memberIdInput.value.trim();
+    }
+
+    function setDateLimits() {
+      const now = new Date();
+      const minDate = new Date();
+
+      if (now.getHours() >= 22) {
+        minDate.setDate(now.getDate() + 2);
+      } else {
+        minDate.setDate(now.getDate() + 1);
+      }
+
+      const maxDate = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+      const formatDate = (d) => {
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      };
+
+      dateInput.min = formatDate(minDate);
+      dateInput.max = formatDate(maxDate);
+      updateDateDisplay();
+    }
+
+    function updateDateDisplay() {
+      const dateDisplay = document.getElementById("dateDisplay");
+      if (!dateDisplay) return;
+
+      if (!dateInput.value) {
+        dateDisplay.textContent = "日付を選択してください";
+        return;
+      }
+
+      const parts = dateInput.value.split("-");
+      if (parts.length === 3) {
+        dateDisplay.textContent = `${parts[0]}/${parts[1]}/${parts[2]}`;
+      } else {
+        dateDisplay.textContent = dateInput.value;
+      }
+    }
+
+    function resetBookingArea() {
+      selectedMember = null;
+      memberCard.style.display = "none";
+      bookingArea.style.display = "none";
+      dateInput.value = "";
+      updateDateDisplay();
+      timeSelect.innerHTML = '<option value="" disabled selected>日付を選択してください</option>';
+    }
+
+    async function checkMember() {
+      const staffPassword = getStaffPassword();
+      const memberId = getMemberId();
+
+      if (!staffPassword || staffPassword.length !== 4) {
+        setMessage("スタッフパスワードを4桁で入力してください。", "error");
+        return;
+      }
+
+      if (!memberId) {
+        setMessage("会員番号を入力してください。", "error");
+        return;
+      }
+
+      resetBookingArea();
+      setMessage("", "");
+      setLoading(checkMemberBtn, true, "確認中...", "会員を確認する");
+
+      try {
+        const params = new URLSearchParams({
+          action: "getMemberForProxy",
+          staffPassword,
+          memberId
+        });
+        const res = await fetch(`${GAS_URL}?${params.toString()}`);
+        const result = await res.json();
+
+        if (result.status !== "success") {
+          if ((result.message || "").includes("パスワード")) {
+            clearSavedStaffPassword();
+          }
+          setMessage(result.message || "会員確認に失敗しました。", "error");
+          return;
+        }
+
+        saveStaffPassword(staffPassword);
+        selectedMember = result.member;
+        document.getElementById("memberIdText").textContent = selectedMember.memberId;
+        document.getElementById("memberNameText").textContent = selectedMember.name;
+        document.getElementById("memberPlanText").textContent = selectedMember.plan || "未設定";
+        document.getElementById("memberLineText").textContent = selectedMember.hasLine ? "あり" : "なし";
+        document.getElementById("lineNote").textContent = selectedMember.hasLine ? "" : "LINE未連携のため、お客様へのLINE通知は送信されません。";
+
+        memberCard.style.display = "block";
+        bookingArea.style.display = "block";
+        setMessage("会員情報を確認しました。予約日を選択してください。", "success");
+      } catch (err) {
+        setMessage("通信エラーが発生しました。時間をおいて再度お試しください。", "error");
+      } finally {
+        setLoading(checkMemberBtn, false, "確認中...", "会員を確認する");
+      }
+    }
+
+    async function loadSlots() {
+      if (!selectedMember || !dateInput.value) return;
+
+      timeSelect.innerHTML = '<option value="" disabled selected>空き枠を確認中...</option>';
+      setMessage("", "");
+
+      try {
+        const params = new URLSearchParams({
+          date: dateInput.value,
+          plan: selectedMember.plan || ""
+        });
+        const res = await fetch(`${GAS_URL}?${params.toString()}`);
+        const result = await res.json();
+
+        if (!result.availableSlots || result.availableSlots.length === 0) {
+          timeSelect.innerHTML = '<option value="" disabled selected>この日は空き枠がありません</option>';
+          return;
+        }
+
+        timeSelect.innerHTML = '<option value="" disabled selected>時間を選択してください</option>';
+        result.availableSlots.forEach((slot) => {
+          const option = document.createElement("option");
+          option.value = slot;
+          option.textContent = slot;
+          timeSelect.appendChild(option);
+        });
+      } catch (err) {
+        timeSelect.innerHTML = '<option value="" disabled selected>空き枠の取得に失敗しました</option>';
+      }
+    }
+
+    async function submitProxyBooking() {
+      const staffPassword = getStaffPassword();
+      const memberId = selectedMember ? selectedMember.memberId : "";
+      const date = dateInput.value;
+      const time = timeSelect.value;
+
+      if (!selectedMember) {
+        setMessage("先に会員確認を行ってください。", "error");
+        return;
+      }
+
+      if (!date || !time) {
+        setMessage("予約日と予約時間を選択してください。", "error");
+        return;
+      }
+
+      const ok = confirm(`${selectedMember.name} 様\n${date} ${time}\n\nこの内容で代行予約を作成しますか？`);
+      if (!ok) return;
+
+      setMessage("", "");
+      setLoading(submitBtn, true, "予約作成中...", "この内容で代行予約する");
+
+      try {
+        const payload = {
+          action: "proxyBooking",
+          staffPassword,
+          memberId,
+          date,
+          time
+        };
+
+        const res = await fetch(GAS_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+
+        if (result.status === "success") {
+          saveStaffPassword(staffPassword);
+          setMessage("代行予約が完了しました。\nGoogleカレンダー登録とLINE通知も通常予約と同じ流れで処理されます。", "success");
+          dateInput.value = "";
+          updateDateDisplay();
+          timeSelect.innerHTML = '<option value="" disabled selected>日付を選択してください</option>';
+        } else {
+          if ((result.message || "").includes("パスワード")) {
+            clearSavedStaffPassword();
+          }
+          setMessage(result.message || "予約作成に失敗しました。", "error");
+        }
+      } catch (err) {
+        setMessage("通信エラーが発生しました。予約ログやカレンダーを確認してください。", "error");
+      } finally {
+        setLoading(submitBtn, false, "予約作成中...", "この内容で代行予約する");
+      }
+    }
+
+    checkMemberBtn.addEventListener("click", checkMember);
+    dateInput.addEventListener("change", () => {
+      updateDateDisplay();
+      loadSlots();
+    });
+    submitBtn.addEventListener("click", submitProxyBooking);
+
+    memberIdInput.addEventListener("input", () => {
+      selectedMember = null;
+      memberCard.style.display = "none";
+      bookingArea.style.display = "none";
+      setMessage("", "");
+    });
+
+    setDateLimits();
+    loadSavedStaffPassword();
+  </script>
+</body>
+</html>
