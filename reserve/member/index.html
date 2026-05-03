@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>たまフィット - スマート予約システム</title>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18078211726"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'AW-18078211726');
+  </script>
+
   <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -544,6 +555,9 @@
     const msgArea = isMember ? document.getElementById('statusMsg') : document.getElementById('trialStatusMsg');
     
     msgArea.innerHTML = '<span style="color:#2ea14c; font-weight:bold;">リクエストを送信しました！<br>LINEの通知をご確認ください。</span>';
+
+    // ★Google広告 コンバージョン計測タグ（予約完了）★
+    gtag('event', 'conversion', {'send_to': 'AW-18078211726/ELYXCM-Q4aYCEI69rqxD'});
 
     if (liff.isInClient()) {
       liff.sendMessages([{
