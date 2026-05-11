@@ -520,6 +520,7 @@
     const d = isMember ? document.getElementById('bookDate').value : document.getElementById('tDate').value;
     const t = isMember ? document.getElementById('bookTime').value : document.getElementById('tTime').value;
     const btn = isMember ? document.getElementById('bookBtn') : document.getElementById('tBtn');
+    const defaultBtnText = btn.textContent;
 
     if(!d || !t) return alert("希望日と時間を選択してください。");
     btn.disabled = true; btn.textContent = "送信中...";
@@ -541,23 +542,48 @@
       const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
       const r = await res.json();
       if(r.status === "success") {
-        finishBooking(isMember); 
+        await finishBooking(isMember); 
       } else { 
         alert("失敗: " + r.message); 
-        btn.disabled = false; btn.textContent = "予約を確定する"; 
+        btn.disabled = false; btn.textContent = defaultBtnText; 
       }
     } catch(e) { 
-      finishBooking(isMember); 
+      alert("通信エラーが発生しました。予約が完了したか確認できないため、時間をおいて再度お試しください。");
+      btn.disabled = false; btn.textContent = defaultBtnText;
     }
   }
 
-  function finishBooking(isMember) {
+  let trialConversionSent = false;
+
+  function fireTrialConversionOnce() {
+    if (trialConversionSent) return Promise.resolve();
+    trialConversionSent = true;
+
+    return new Promise((resolve) => {
+      const done = () => resolve();
+      setTimeout(done, 2200);
+
+      if (typeof gtag !== 'function') {
+        done();
+        return;
+      }
+
+      gtag('event', 'conversion', {
+        'send_to': 'AW-18078211726/ELYXCM-Q4aYCEI69rqxD',
+        'event_callback': done,
+        'event_timeout': 2000
+      });
+    });
+  }
+
+  async function finishBooking(isMember) {
     const msgArea = isMember ? document.getElementById('statusMsg') : document.getElementById('trialStatusMsg');
     
     msgArea.innerHTML = '<span style="color:#2ea14c; font-weight:bold;">リクエストを送信しました！<br>LINEの通知をご確認ください。</span>';
 
-    // ★Google広告 コンバージョン計測タグ（予約完了）★
-    gtag('event', 'conversion', {'send_to': 'AW-18078211726/ELYXCM-Q4aYCEI69rqxD'});
+    if (!isMember) {
+      await fireTrialConversionOnce();
+    }
 
     if (liff.isInClient()) {
       liff.sendMessages([{
