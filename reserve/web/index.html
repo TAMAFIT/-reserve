@@ -3,185 +3,2054 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>たまフィット - 無料体験予約</title>
+  <title>たまフィット 無料体験予約</title>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18078211726"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'AW-18078211726');
+  </script>
+
   <style>
-    body { font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif; background-color: #f7f9fa; color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
-    .form-container { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); width: 100%; max-width: 450px; }
-    .header { text-align: center; margin-bottom: 25px; }
-    .header h1 { margin: 0; font-size: 24px; color: #1a1a1a; letter-spacing: 1px; }
-    .header p { font-size: 14px; color: #666; margin-top: 5px; }
-    .form-group { margin-bottom: 20px; position: relative; }
-    label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #444; }
-    
-    input[type="text"], input[type="email"], input[type="tel"] { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: #fff; -webkit-appearance: none; }
-    input:focus { outline: none; border-color: #007bff; }
-
-    .date-time-btn { width: 100%; padding: 16px; border: 1px solid #cce5ff; border-radius: 8px; font-size: 16px; font-weight: bold; color: #0056b3; background-color: #e6f2ff; text-align: center; cursor: pointer; box-sizing: border-box; -webkit-appearance: none; box-shadow: 0 3px 6px rgba(0, 123, 255, 0.15); transition: transform 0.1s, box-shadow 0.1s; }
-    .date-time-btn:active { transform: translateY(2px); box-shadow: 0 1px 2px rgba(0, 123, 255, 0.15); }
-    input[type="date"].date-time-btn::-webkit-calendar-picker-indicator { position: absolute; left: 0; top: 0; width: 100%; height: 100%; margin: 0; padding: 0; cursor: pointer; opacity: 0; }
-    select.date-time-btn { text-align-last: center; }
-
-    .arrow-indicator { display: none; text-align: center; margin: -10px 0 15px 0; animation: bounce 1.2s infinite; }
-    .arrow-indicator svg { width: 40px; height: 40px; stroke: #007bff; stroke-width: 4px; }
-    @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-12px); } 60% { transform: translateY(-6px); } }
-
-    .notes {
-      font-size: 13px; color: #d9534f; margin-bottom: 15px; text-align: center; font-weight: bold; background: #fdf0f0; padding: 12px; border-radius: 8px; border: 1px solid #f5c6cb; line-height: 1.4;
+    :root {
+      color-scheme: light;
+      --ink: #18202a;
+      --muted: #647282;
+      --line: #d7e3dc;
+      --blue: #0ba84f;
+      --blue-dark: #066935;
+      --green: #06a34f;
+      --red: #c73737;
+      --gold: #0a7d3f;
+      --line-green: #06c755;
     }
 
-    .submit-btn { width: 100%; background-color: #007bff; color: white; padding: 16px; border: none; border-radius: 8px; font-size: 17px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3); margin-top: 5px; }
-    .submit-btn:disabled { background-color: #cccccc; box-shadow: none; }
-    #result-message { margin-top: 20px; text-align: center; font-weight: bold; line-height: 1.5; }
-    .success { color: #28a745; }
-    .error { color: #dc3545; }
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(250, 253, 251, 0.88), rgba(236, 247, 240, 0.9)),
+        url("../../images/18.webp") center / cover fixed;
+    }
+
+    .page {
+      width: min(calc(100vw - 20px), 560px);
+      margin: 0 auto;
+      padding: 26px 0 36px;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.86);
+      border-radius: 8px;
+      box-shadow: 0 18px 42px rgba(24, 32, 42, 0.18);
+      overflow: hidden;
+      backdrop-filter: blur(5px);
+    }
+
+    .header {
+      padding: 28px 22px 22px;
+      border-bottom: 3px solid var(--blue);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(250, 255, 252, 0.98));
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--gold);
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+      word-break: break-all;
+    }
+
+    .content,
+    form {
+      padding: 22px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label,
+    .field-title {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-left: 6px;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 11px;
+      vertical-align: 1px;
+    }
+
+    .required {
+      color: #fff;
+      background: var(--red);
+    }
+
+    .optional {
+      color: var(--blue-dark);
+      background: #eefaf3;
+      border: 1px solid #bfe8cf;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 50px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px 13px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 16px;
+    }
+
+    input:focus,
+    select:focus {
+      outline: 3px solid rgba(6, 199, 85, 0.18);
+      border-color: var(--blue);
+    }
+
+    .hint {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+      word-break: break-all;
+    }
+
+    .mail-caution {
+      margin-top: 8px;
+      padding: 10px;
+      border: 1px solid #efc4c4;
+      border-radius: 8px;
+      background: #fff7f7;
+      color: #6f3030;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 700;
+      word-break: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .mail-caution strong {
+      display: block;
+      margin-bottom: 2px;
+      color: #c73737;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .action-panel {
+      margin-bottom: 14px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .action-toggle {
+      width: 100%;
+      min-height: 48px;
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      font: inherit;
+      font-size: 19px;
+      font-weight: 900;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0;
+    }
+
+    .action-toggle::after {
+      content: "⌄";
+      flex: 0 0 auto;
+      color: var(--blue-dark);
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .action-panel.is-open .action-toggle::after {
+      transform: rotate(180deg);
+    }
+
+    .reservation-body {
+      display: none;
+      margin-top: 12px;
+    }
+
+    .action-panel.is-open .reservation-body {
+      display: block;
+    }
+
+    .availability {
+      margin-top: 18px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .contact-panel {
+      margin-top: 18px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .contact-body {
+      display: none;
+      margin-top: 10px;
+    }
+
+    .contact-panel.is-open .contact-body {
+      display: block;
+    }
+
+    .contact-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .contact-link {
+      min-height: 50px;
+      border-radius: 8px;
+      padding: 12px;
+      color: #fff;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+    }
+
+    .contact-link.line {
+      background: var(--line-green);
+    }
+
+    .contact-link.mail {
+      background: #2d7fd3;
+    }
+
+    .availability-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .availability-toggle {
+      flex: 1 1 auto;
+      min-height: 48px;
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      font: inherit;
+      font-size: 17px;
+      font-weight: 900;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0;
+    }
+
+    .availability-toggle::after {
+      content: "⌄";
+      flex: 0 0 auto;
+      color: var(--blue-dark);
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .availability.is-open .availability-toggle::after {
+      transform: rotate(180deg);
+    }
+
+    .availability-body {
+      display: none;
+      margin-top: 10px;
+    }
+
+    .availability.is-open .availability-body {
+      display: block;
+    }
+
+    .availability-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .day-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .day-card.is-selected-day {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(6, 199, 85, 0.14);
+    }
+
+    .day-button {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      padding: 12px;
+      font: inherit;
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .day-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-weight: 900;
+    }
+
+    .selected-label {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: #eefaf3;
+      color: var(--blue-dark);
+      font-size: 11px;
+      vertical-align: 2px;
+    }
+
+    .periods {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .period {
+      display: grid;
+      place-items: center;
+      min-height: 34px;
+      border-radius: 7px;
+      background: #f3f6f9;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.15;
+      text-align: center;
+    }
+
+    .period b {
+      display: block;
+      font-size: 14px;
+      line-height: 1.1;
+    }
+
+    .period.is-open {
+      background: #eef8f2;
+      color: #16603d;
+    }
+
+    .period.is-limited {
+      background: #fff8e6;
+      color: #72520d;
+    }
+
+    .period.is-closed {
+      background: #f6f1f1;
+      color: #8a3535;
+    }
+
+    .slot-detail {
+      display: none;
+      border-top: 1px solid var(--line);
+      padding: 12px;
+      background: #f8fdf9;
+    }
+
+    .slot-detail.is-open {
+      display: block;
+    }
+
+    .slot-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .slot-button {
+      min-height: 38px;
+      border: 1px solid #bfe8cf;
+      border-radius: 8px;
+      padding: 8px 12px;
+      background: #fff;
+      color: var(--blue-dark);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .slot-button:hover,
+    .slot-button:focus {
+      outline: 3px solid rgba(6, 199, 85, 0.18);
+      border-color: var(--blue);
+    }
+
+    .date-search {
+      display: none;
+      margin: 0 0 14px;
+      padding: 12px;
+      border: 1px solid #bfe8cf;
+      border-radius: 8px;
+      background: #f8fdf9;
+    }
+
+    .availability-mode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .mode-card,
+    .date-search-toggle {
+      width: 100%;
+      min-height: 74px;
+      border: 1px solid #bfe8cf;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--blue-dark);
+      font: inherit;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .availability:not(.is-open) .date-search-toggle {
+      display: none;
+    }
+
+    .mode-card {
+      color: var(--ink);
+      background: #f8fdf9;
+    }
+
+    .mode-card.is-active,
+    .date-search-toggle.is-active {
+      border-color: var(--blue);
+      background: #e8f7ee;
+      color: var(--blue-dark);
+      box-shadow: 0 0 0 3px rgba(6, 199, 85, 0.14);
+    }
+
+    .calendar-svg {
+      width: 32px;
+      height: 32px;
+      flex: 0 0 auto;
+      display: block;
+    }
+
+    .date-search-copy {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .date-search-copy span {
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    .date-search-copy small {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+
+    .date-search-body {
+      margin-top: 0;
+    }
+
+    .date-search.is-open .date-search-body {
+      display: block;
+    }
+
+    .date-search.is-open {
+      display: block;
+    }
+
+    .custom-slot-result {
+      margin-top: 10px;
+    }
+
+    .loading-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 12px;
+      border: 1px solid #bfe8cf;
+      border-radius: 8px;
+      background: #eefaf3;
+      color: var(--blue-dark);
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.5;
+    }
+
+    .availability-error {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid #efc4c4;
+      border-radius: 8px;
+      background: #fff6f6;
+      color: #873030;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .retry-button {
+      justify-self: start;
+      min-height: 40px;
+      border: 1px solid var(--blue);
+      border-radius: 8px;
+      padding: 9px 14px;
+      background: #fff;
+      color: var(--blue-dark);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .retry-button:focus,
+    .retry-button:hover {
+      outline: 3px solid rgba(6, 199, 85, 0.18);
+      background: #eefaf3;
+    }
+
+    .spinner {
+      width: 22px;
+      height: 22px;
+      border: 3px solid rgba(6, 199, 85, 0.22);
+      border-top-color: var(--blue);
+      border-radius: 999px;
+      animation: spin 0.8s linear infinite;
+      flex: 0 0 auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .method-card {
+      display: none;
+      margin: 0;
+      padding: 0 14px 14px;
+      border: 0;
+      background: transparent;
+      min-height: 152px;
+    }
+
+    .method-card h2 {
+      display: none;
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.45;
+      letter-spacing: 0;
+    }
+
+    .method-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .method-proceed {
+      display: block;
+      width: 100%;
+      margin-top: 14px;
+      min-height: 50px;
+      border: 0;
+      border-radius: 8px;
+      color: #fff;
+      font: inherit;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .method-select-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+      padding: 0;
+    }
+
+    .method-choice-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .method-option {
+      border: 2px solid transparent;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    }
+
+    .method-choice {
+      width: 100%;
+      min-height: 76px;
+      border: 0;
+      border-radius: 0;
+      padding: 13px 14px;
+      background: transparent;
+      color: var(--ink);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      display: grid;
+      gap: 4px;
+    }
+
+    .method-choice strong {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    .method-choice > span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .method-option.line {
+      background: linear-gradient(180deg, #f0fff6, #e8faef);
+      border-color: #8bddaa;
+      color: #0b6635;
+    }
+
+    .method-option.line.is-active .line-card {
+      display: block;
+    }
+
+    .method-option.email {
+      background: linear-gradient(180deg, #f1f7ff, #eaf3ff);
+      border-color: #9dc5f3;
+      color: #104f8f;
+    }
+
+    .method-option.email.is-active .email-card {
+      display: block;
+    }
+
+    .method-option.none {
+      background: linear-gradient(180deg, #fff6f6, #ffeded);
+      border-color: #eda9a9;
+      color: #8b2d2d;
+    }
+
+    .method-option.none.is-active .none-card {
+      display: block;
+    }
+
+    .method-option.is-active {
+      transform: translateY(-1px);
+    }
+
+    .method-option.line.is-active {
+      border-color: #06c755;
+      box-shadow: 0 8px 18px rgba(6, 199, 85, 0.18);
+    }
+
+    .method-option.email.is-active {
+      border-color: #2d7fd3;
+      box-shadow: 0 8px 18px rgba(45, 127, 211, 0.18);
+    }
+
+    .method-option.none.is-active {
+      border-color: #d36b6b;
+      box-shadow: 0 8px 18px rgba(199, 55, 55, 0.16);
+    }
+
+    .line-card {
+      background: #effbf4;
+      border-color: #bee8d2;
+    }
+
+    .line-card h2 {
+      color: #14633c;
+    }
+
+    .email-card {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    .email-card h2 {
+      color: var(--blue-dark);
+    }
+
+    .none-card {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    .none-card h2 {
+      color: #873030;
+    }
+
+    .recommend-badge {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: var(--line-green);
+      color: #fff;
+      font-size: 11px;
+      vertical-align: 2px;
+    }
+
+    .line-button {
+      display: block;
+      width: 100%;
+      margin-top: 14px;
+      padding: 15px 16px;
+      border-radius: 8px;
+      background: var(--line-green);
+      color: #fff;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 900;
+      font-size: 17px;
+    }
+
+    .line-flow {
+      display: block;
+      margin-top: 8px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      color: #0b6635;
+      font-size: 11px;
+      font-weight: 900;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .line-flow span {
+      display: inline;
+    }
+
+    .email-proceed {
+      background: #2d7fd3;
+      box-shadow: 0 8px 18px rgba(45, 127, 211, 0.22);
+    }
+
+    .none-proceed {
+      background: #c94f4f;
+      box-shadow: 0 8px 18px rgba(199, 55, 55, 0.2);
+    }
+
+    .status-line {
+      display: none;
+      margin: -4px 0 14px;
+      color: var(--blue-dark);
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .booking-mode-banner {
+      display: none;
+      margin-bottom: 18px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.6;
+      font-weight: 800;
+    }
+
+    .booking-mode-banner strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    .booking-mode-banner.email {
+      display: block;
+      background: #eef6ff;
+      border: 1px solid #9dc5f3;
+      color: #104f8f;
+    }
+
+    .booking-mode-banner.none {
+      display: block;
+      background: #fff6f6;
+      border: 1px solid #efc4c4;
+      color: #873030;
+    }
+
+    .notice {
+      margin: 4px 0 18px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #fff8e6;
+      border: 1px solid #ead39a;
+      color: #72520d;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .submit-btn {
+      width: 100%;
+      min-height: 54px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--blue);
+      color: #fff;
+      font: inherit;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(6, 199, 85, 0.28);
+    }
+
+    .submit-btn:disabled {
+      cursor: wait;
+      background: #a8b4c1;
+      box-shadow: none;
+    }
+
+    #bookingForm {
+      display: none;
+      border-top: 1px solid var(--line);
+    }
+
+    #result-message {
+      padding: 0 22px 22px;
+      font-size: 14px;
+      line-height: 1.7;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    #result-message.is-complete {
+      padding-top: 22px;
+    }
+
+    .success { color: var(--green); }
+    .error { color: var(--red); }
+
+    .content.is-complete,
+    form.is-complete {
+      display: none;
+    }
+
+    .result-box {
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 8px;
+      background: #f5fbf7;
+      border: 1px solid #bee8d2;
+      color: #174f34;
+      text-align: left;
+    }
+
+    .result-box strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #123826;
+    }
+
+    .result-section {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #bee8d2;
+    }
+
+    .result-section-title {
+      display: block;
+      margin-bottom: 6px;
+      color: #123826;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .map-button {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: var(--blue);
+      color: #fff;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 900;
+    }
+
+    .packing-list {
+      margin: 6px 0 0;
+      padding-left: 18px;
+      color: #174f34;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .restart-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      margin: 0 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 14px;
+      background: #fff;
+      color: var(--blue-dark);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .restart-button:hover,
+    .restart-button:focus {
+      outline: 3px solid rgba(6, 199, 85, 0.18);
+      border-color: var(--blue);
+      background: #f4fbf7;
+    }
+
+    .screenshot-reminder {
+      margin: 12px 0;
+      padding: 12px;
+      border: 1px solid #efc4c4;
+      border-radius: 8px;
+      background: #fff6f6;
+      color: #873030;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.65;
+    }
+
+    .screenshot-reminder.soft {
+      border-color: #bee8d2;
+      background: #f4fbf7;
+      color: #174f34;
+    }
+
+    .after-contact-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .after-contact-button {
+      min-height: 46px;
+      border: 1px solid #bfe8cf;
+      border-radius: 8px;
+      padding: 10px;
+      background: #fff;
+      color: var(--blue-dark);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 900;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .after-contact-button.line {
+      background: var(--line-green);
+      border-color: var(--line-green);
+      color: #fff;
+    }
+
+    .after-email-form {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #bee8d2;
+    }
+
+    .after-email-form.is-open {
+      display: grid;
+      gap: 8px;
+    }
+
+    .after-email-message {
+      min-height: 20px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .after-contact-button:disabled {
+      cursor: wait;
+      opacity: 0.7;
+    }
+
+    footer {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 420px) {
+      .page { padding: 12px 10px 24px; }
+      .header, .content, form { padding-left: 16px; padding-right: 16px; }
+      h1 { font-size: 23px; }
+      .after-contact-actions { grid-template-columns: 1fr; }
+      .contact-actions { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
-  <div class="form-container">
-    <div class="header">
-      <h1>たまフィット</h1>
-      <p>無料体験トレーニング予約</p>
-    </div>
-    <form id="bookingForm">
-      <div class="form-group">
-        <label for="name">お名前（フルネーム）</label>
-        <input type="text" id="name" placeholder="例：山田 太郎 / John Doe" required>
-      </div>
-      <div class="form-group">
-        <label for="kana">フリガナ（カタカナ）</label>
-        <input type="text" id="kana" placeholder="例：ヤマダ タロウ" pattern="^[ァ-ヶー\s　]+$" title="全角カタカナで入力してください" required>
-      </div>
-      <div class="form-group">
-        <div id="emailInputArea">
-          <label for="email">メールアドレス（予約確認用）</label>
-          <input type="email" id="email" placeholder="example@mail.com" required>
-        </div>
-        <div style="margin-top:10px; font-size:13px;">
-          <label style="cursor:pointer; display:inline-flex; align-items:center; font-weight:normal;">
-            <input type="checkbox" id="noEmailCheck" style="width:auto; margin:0 5px 0 0;"> メールアドレスをお持ちでない場合
-          </label>
-        </div>
-      </div>
-      <div class="form-group" id="phoneGroup" style="display:none;">
-        <label for="phone">電話番号</label>
-        <input type="tel" id="phone" placeholder="090-1234-5678" maxlength="13">
-      </div>
-      <div class="form-group">
-        <label for="date">予約希望日</label>
-        <input type="date" id="date" class="date-time-btn" required>
-      </div>
-      <div id="arrow" class="arrow-indicator">
-        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </div>
-      <div class="form-group">
-        <label for="time">予約時間（60分）</label>
-        <select id="time" class="date-time-btn" required>
-          <option value="" disabled selected>希望日を先に選んでください</option>
-        </select>
+  <main class="page">
+    <section class="panel" aria-label="無料体験予約">
+      <header class="header">
+        <p class="eyebrow">たまフィット</p>
+        <h1>無料体験予約</h1>
+        <p class="lead">予約方法を選んでください。<br>LINE、メール、連絡先なしから選べます。</p>
+      </header>
+
+      <div class="content">
+        <section class="action-panel" id="reservationSection" aria-label="予約方法">
+          <button class="action-toggle" id="reservationToggle" type="button" aria-expanded="false">
+            予約する
+          </button>
+          <div class="reservation-body" id="reservationBody">
+            <div class="form-group">
+              <label>予約方法<span class="badge optional">任意</span></label>
+              <select class="method-select-hidden" id="methodSelect" aria-hidden="true" tabindex="-1">
+                <option value="" selected>予約方法を選択してください</option>
+                <option value="line">LINEで予約・連絡を受け取る</option>
+                <option value="email">メールで予約・連絡を受け取る</option>
+                <option value="none">連絡先を入力せずに予約する</option>
+              </select>
+              <div class="method-choice-grid" role="group" aria-label="予約方法を選択">
+                <div class="method-option line">
+                  <button class="method-choice" type="button" data-method-choice="line">
+                    <strong>LINEで予約・連絡を受け取る<span class="recommend-badge">おすすめ</span></strong>
+                    <span>友だち追加後、LINEの予約メニューから進めます。</span>
+                  </button>
+                  <div class="method-card line-card" id="lineRoute">
+                    <h2>LINEで予約する<span class="recommend-badge">おすすめ</span></h2>
+                    <p>友だち追加後、LINE画面下のリッチメニューから「無料体験予約」を押してください。</p>
+                    <div class="line-flow" aria-label="LINE予約の流れ">
+                      <span>友だち追加 → リッチメニュー → 無料体験予約</span>
+                    </div>
+                    <a class="line-button" href="https://lin.ee/ypLygRb" target="_blank" rel="noopener">LINE友だち追加へ進む</a>
+                  </div>
+                </div>
+                <div class="method-option email">
+                  <button class="method-choice" type="button" data-method-choice="email">
+                    <strong>メールで予約・連絡を受け取る</strong>
+                    <span>確認メールを受け取りたい方はこちら。</span>
+                  </button>
+                  <div class="method-card email-card" id="emailRoute">
+                    <h2>メールで予約・連絡を受け取る</h2>
+                    <p>予約完了後、入力いただいたメールアドレスへ確認メールを送信します。Gmail、iCloudメールなど、普段確認できるメールアドレスをおすすめします。</p>
+                    <button class="method-proceed email-proceed" type="button" data-open-booking-form="email">メールで予約へ進む</button>
+                  </div>
+                </div>
+                <div class="method-option none">
+                  <button class="method-choice" type="button" data-method-choice="none">
+                    <strong>連絡先なしで予約する</strong>
+                    <span>確認メールやLINE通知は届きません。</span>
+                  </button>
+                  <div class="method-card none-card" id="noneRoute">
+                    <h2>連絡先を入力せずに予約する</h2>
+                    <p>予約確認や日程変更のご連絡はできません。予約完了後の画面をスクリーンショットで保存してください。質問や変更がある場合は、メールまたはLINEからご連絡ください。</p>
+                    <button class="method-proceed none-proceed" type="button" data-open-booking-form="none">連絡先なしで予約へ進む</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="contact-panel" id="contactSection" aria-label="連絡先">
+          <button class="action-toggle" id="contactToggle" type="button" aria-expanded="false">
+            連絡する
+          </button>
+          <div class="contact-body" id="contactBody">
+            <p class="hint">ご質問・変更・キャンセルなどはこちらからご連絡ください。</p>
+            <div class="contact-actions">
+              <a class="contact-link line" href="https://lin.ee/ypLygRb" target="_blank" rel="noopener">LINEで連絡する</a>
+              <a class="contact-link mail" href="mailto:tamafit.takamatsu@gmail.com">メールで連絡する</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="availability" id="availabilitySection" aria-label="今週の空き目安">
+          <div class="availability-header">
+            <button class="availability-toggle" id="availabilityToggle" type="button" aria-expanded="false">
+              空き状況を見る
+            </button>
+          </div>
+          <div class="availability-body" id="availabilityBody">
+            <div class="availability-mode-grid">
+              <button class="mode-card is-active" id="weekModeToggle" type="button" aria-pressed="true">
+                <span class="date-search-copy">
+                  <span>直近1週間</span>
+                </span>
+              </button>
+              <button class="date-search-toggle" id="dateSearchToggle" type="button">
+                <svg class="calendar-svg" aria-hidden="true" viewBox="0 0 32 32" fill="none" focusable="false">
+                  <rect x="5" y="6" width="22" height="21" rx="4" stroke="currentColor" stroke-width="2.4"/>
+                  <path d="M5 12H27" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+                  <path d="M11 4V8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+                  <path d="M21 4V8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+                  <rect x="10" y="16" width="4" height="4" rx="1" fill="currentColor"/>
+                  <rect x="18" y="16" width="4" height="4" rx="1" fill="currentColor"/>
+                  <rect x="10" y="22" width="4" height="4" rx="1" fill="currentColor"/>
+                </svg>
+                <span class="date-search-copy">
+                  <span>別の日を選択</span>
+                </span>
+              </button>
+            </div>
+            <div class="date-search" id="dateSearch">
+              <div class="date-search-body" id="dateSearchBody">
+                <label for="customDate">別の日を選択</label>
+                <input type="date" id="customDate">
+                <div class="custom-slot-result" id="customSlotResult">
+                  <p class="hint">日付を選ぶと空き時間を確認できます。</p>
+                </div>
+              </div>
+            </div>
+            <p class="hint">○ 空きあり / △ 残りわずか / × 空きなし<br>日付を押すと、選べる時間を確認できます。</p>
+            <div class="availability-list" id="availabilityList">
+            <div class="loading-box"><span class="spinner" aria-hidden="true"></span><span>空き状況を読み込み中です。少しお待ちください。</span></div>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <div class="notes">
-        ※無料体験トレーニングは、初回のお客様に限り「お一人様1回まで」とさせていただきます。
-      </div>
+      <form id="bookingForm">
+        <div class="booking-mode-banner" id="bookingModeBanner"></div>
 
-      <button type="submit" class="submit-btn" id="submitBtn">予約を確定する</button>
-    </form>
-    <div id="result-message"></div>
-  </div>
+        <div class="form-group">
+          <label for="date">希望日<span class="badge required">必須</span></label>
+          <input type="date" id="date" required>
+          <p class="hint">当日予約はできません。翌日予約は前日22:00まで受け付けています。</p>
+        </div>
+
+        <p class="status-line" id="slotStatus">空き状況を確認中...</p>
+
+        <div class="form-group">
+          <label for="time">希望時間<span class="badge required">必須</span></label>
+          <select id="time" required>
+            <option value="" disabled selected>先に希望日を選択してください</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="name">お名前<span class="badge required">必須</span></label>
+          <input type="text" id="name" placeholder="例：山田 太郎" autocomplete="name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="kana">フリガナ<span class="badge required">必須</span></label>
+          <input type="text" id="kana" placeholder="例：ヤマダ タロウ" autocomplete="off" required>
+        </div>
+
+        <div class="form-group" id="emailGroup">
+          <label for="email">メールアドレス<span class="badge required">必須</span></label>
+          <input type="email" id="email" name="email" placeholder="example@mail.com" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false">
+          <p class="mail-caution"><strong>キャリアメールをご利用の方へ</strong>docomo、au、SoftBankなどのキャリアメールは、受信設定により確認メールが届かないことがあります。Gmail、iCloudメールなど、普段確認できるメールアドレスのご利用をおすすめします。</p>
+        </div>
+
+        <div class="notice" id="bookingNotice">
+          予約内容の確認や日程変更のご連絡は、選択した方法に応じて行います。
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">この内容で予約する</button>
+      </form>
+
+      <div id="result-message"></div>
+    </section>
+
+    <footer>香川県高松市今里町393-1 前川ビル1F</footer>
+  </main>
 
   <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbwk--BBlH7rg_VF9WDfqlvcmloBydipwdK60CVEk1fvPunvSTvR5IkbMxNbyHhmSDuS/exec";
+    const OWNER_EMAIL = "tamafit.takamatsu@gmail.com";
+    const LINE_FRIEND_URL = "https://lin.ee/ypLygRb";
+    const GOOGLE_MAPS_URL = "https://maps.app.goo.gl/naVGavFY9bZjyS228";
+    const TRIAL_CONVERSION_SEND_TO = "AW-18078211726/ELYXCM-Q4aYCEI69rqxD";
 
-    const noEmailCheck = document.getElementById('noEmailCheck');
-    const emailInputArea = document.getElementById('emailInputArea');
-    const emailInput = document.getElementById('email');
-    const phoneGroup = document.getElementById('phoneGroup');
-    const phoneInput = document.getElementById('phone');
-    let currentContactMethod = "メール";
+    const availabilitySection = document.getElementById("availabilitySection");
+    const availabilityToggle = document.getElementById("availabilityToggle");
+    const availabilityList = document.getElementById("availabilityList");
+    const dateSearch = document.getElementById("dateSearch");
+    const weekModeToggle = document.getElementById("weekModeToggle");
+    const dateSearchToggle = document.getElementById("dateSearchToggle");
+    const customDateInput = document.getElementById("customDate");
+    const customSlotResult = document.getElementById("customSlotResult");
+    const reservationSection = document.getElementById("reservationSection");
+    const reservationToggle = document.getElementById("reservationToggle");
+    const reservationBody = document.getElementById("reservationBody");
+    const contactSection = document.getElementById("contactSection");
+    const contactToggle = document.getElementById("contactToggle");
+    const methodSelect = document.getElementById("methodSelect");
+    const methodButtons = Array.from(document.querySelectorAll("[data-method-choice]"));
+    const lineRoute = document.getElementById("lineRoute");
+    const emailRoute = document.getElementById("emailRoute");
+    const noneRoute = document.getElementById("noneRoute");
+    const form = document.getElementById("bookingForm");
+    const content = document.querySelector(".content");
+    const dateInput = document.getElementById("date");
+    const timeSelect = document.getElementById("time");
+    const slotStatus = document.getElementById("slotStatus");
+    const submitBtn = document.getElementById("submitBtn");
+    const msg = document.getElementById("result-message");
+    const emailGroup = document.getElementById("emailGroup");
+    const emailInput = document.getElementById("email");
+    const bookingNotice = document.getElementById("bookingNotice");
+    const bookingModeBanner = document.getElementById("bookingModeBanner");
 
-    noEmailCheck.addEventListener('change', (e) => {
-      if (e.target.checked) {
-        const isOk = confirm("完了メールが届きませんがよろしいですか？\n（ご予約の確認は、スタッフからのお電話となります）");
-        if (isOk) {
-          emailInputArea.style.display = 'none'; emailInput.required = false; emailInput.value = ''; 
-          phoneGroup.style.display = 'block'; phoneInput.required = true; currentContactMethod = "電話";
-        } else { e.target.checked = false; }
+    let conversionSent = false;
+    let selectedOverviewDate = "";
+    let selectedOverviewTime = "";
+    let bookingFormOpened = false;
+    const overviewSlotsByDate = {};
+    const periodDefinitions = [
+      { key: "morning", label: "午前", start: "10:00", end: "11:45" },
+      { key: "midday", label: "昼", start: "12:00", end: "14:45" },
+      { key: "evening", label: "夕方", start: "15:00", end: "17:45" },
+      { key: "night", label: "夜", start: "18:00", end: "21:00" }
+    ];
+
+    function setMessage(type, html) {
+      msg.className = type;
+      msg.innerHTML = html;
+    }
+
+    function showCompletion(html) {
+      if (content) content.classList.add("is-complete");
+      form.classList.add("is-complete");
+      msg.className = "success is-complete";
+      msg.innerHTML = html;
+      msg.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function setLoading(isLoading) {
+      submitBtn.disabled = isLoading;
+      submitBtn.textContent = isLoading ? "予約を送信中..." : "この内容で予約する";
+    }
+
+    function setDateMin() {
+      const now = new Date();
+      const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      const minDate = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
+      dateInput.min = minDate;
+      customDateInput.min = minDate;
+    }
+
+    function formatDateValue(date) {
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    }
+
+    function formatDisplayDate(date) {
+      const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
+      return `${date.getMonth() + 1}/${date.getDate()}(${weekdays[date.getDay()]})`;
+    }
+
+    function timeToMinutes(time) {
+      const parts = String(time || "").split(":").map(Number);
+      return (parts[0] * 60) + (parts[1] || 0);
+    }
+
+    function getPeriodSlots(slots, period) {
+      const start = timeToMinutes(period.start);
+      const end = timeToMinutes(period.end);
+      return slots.filter((slot) => {
+        const minutes = timeToMinutes(slot);
+        return minutes >= start && minutes <= end;
+      });
+    }
+
+    function getAvailabilityMark(count) {
+      if (count >= 3) return { mark: "○", className: "is-open" };
+      if (count >= 1) return { mark: "△", className: "is-limited" };
+      return { mark: "×", className: "is-closed" };
+    }
+
+    function resetBookingState(options = {}) {
+      const { clearSlots = true } = options;
+      setMessage("", "");
+      msg.classList.remove("is-complete");
+      if (clearSlots) {
+        slotStatus.style.display = "none";
+        timeSelect.innerHTML = '<option value="" disabled selected>先に希望日を選択してください</option>';
+      }
+    }
+
+    function showRoute(method, options = {}) {
+      const { openForm = false, clearSlots = false } = options;
+      methodSelect.value = method;
+      methodButtons.forEach((button) => {
+        const isActive = button.dataset.methodChoice === method;
+        button.classList.toggle("is-active", isActive);
+        button.setAttribute("aria-pressed", String(isActive));
+        const option = button.closest(".method-option");
+        if (option) option.classList.toggle("is-active", isActive);
+      });
+
+      lineRoute.style.display = "";
+      emailRoute.style.display = "";
+      noneRoute.style.display = "";
+      bookingFormOpened = Boolean(openForm && (method === "email" || method === "none"));
+      form.style.display = bookingFormOpened ? "block" : "none";
+      emailGroup.style.display = method === "email" ? "block" : "none";
+      emailInput.required = method === "email";
+
+      if (method === "email") {
+        bookingModeBanner.className = "booking-mode-banner email";
+        bookingModeBanner.innerHTML = "<strong>メールで予約・連絡を受け取る</strong>確認メールを受け取るため、メールアドレスを入力してください。";
+        bookingNotice.textContent = "予約完了後、入力いただいたメールアドレスへ確認メールを送信します。届かない場合は、入力間違いまたは迷惑メールフォルダをご確認ください。";
+      } else if (method === "none") {
+        bookingModeBanner.className = "booking-mode-banner none";
+        bookingModeBanner.innerHTML = "<strong>連絡先なしで予約する</strong>確認メールやLINE通知は届きません。予約完了画面をスクリーンショットで保存してください。";
+        bookingNotice.textContent = `連絡先を入力しない場合、予約確認や日程変更のご連絡はできません。質問や変更がある場合は ${OWNER_EMAIL} までご連絡ください。`;
       } else {
-        emailInputArea.style.display = 'block'; emailInput.required = true;
-        phoneGroup.style.display = 'none'; phoneInput.required = false; phoneInput.value = ''; currentContactMethod = "メール";
-      }
-    });
-
-    phoneInput.addEventListener('input', function(e) {
-      let val = this.value.replace(/\D/g, ''); let formatted = val;
-      if (val.length >= 11) formatted = val.substring(0, 3) + '-' + val.substring(3, 7) + '-' + val.substring(7, 11);
-      else if (val.length >= 10) formatted = val.substring(0, 3) + '-' + val.substring(3, 7) + '-' + val.substring(7);
-      else if (val.length > 3) formatted = val.substring(0, 3) + '-' + val.substring(3);
-      this.value = formatted;
-    });
-
-    const dateInput = document.getElementById('date');
-    const timeSelect = document.getElementById('time');
-    const arrow = document.getElementById('arrow');
-
-    dateInput.addEventListener('change', async () => {
-      if (dateInput.value) {
-        arrow.style.display = 'block'; 
-        timeSelect.innerHTML = '<option value="" disabled selected>空き状況を確認中...</option>';
-        
-        try {
-          const response = await fetch(`${GAS_URL}?date=${dateInput.value}`);
-          const data = await response.json();
-          
-          if (data.availableSlots && data.availableSlots.length > 0) {
-            timeSelect.innerHTML = '<option value="" disabled selected>時間を選択してください</option>';
-            data.availableSlots.forEach(slot => {
-              const opt = document.createElement('option');
-              opt.value = slot; opt.textContent = slot;
-              timeSelect.appendChild(opt);
-            });
-          } else {
-            timeSelect.innerHTML = '<option value="" disabled selected>この日は予約がいっぱいです</option>';
-          }
-        } catch (err) {
-          timeSelect.innerHTML = '<option value="" disabled selected>取得エラーが発生しました</option>';
-        }
-
-        setTimeout(() => { timeSelect.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300);
-      }
-    });
-
-    document.getElementById('bookingForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const btn = document.getElementById('submitBtn'); 
-      const msg = document.getElementById('result-message');
-      const time = document.getElementById('time').value;
-
-      if(!time) {
-        msg.className = "error"; msg.textContent = "時間を選択してください。"; return;
+        bookingModeBanner.className = "booking-mode-banner";
+        bookingModeBanner.innerHTML = "";
       }
 
-      btn.disabled = true; btn.textContent = "送信中..."; msg.textContent = "";
+      resetBookingState({ clearSlots });
+    }
 
-      const payload = {
-        mode: "trial", name: document.getElementById('name').value, kana: document.getElementById('kana').value,
-        contactMethod: currentContactMethod, email: emailInput.value, phone: phoneInput.value,
-        date: dateInput.value, time: time, duration: 60
-      };
+    function closeRoute() {
+      methodSelect.value = "";
+      bookingFormOpened = false;
+      form.style.display = "none";
+      emailGroup.style.display = "none";
+      emailInput.required = false;
+      bookingModeBanner.className = "booking-mode-banner";
+      bookingModeBanner.innerHTML = "";
+      methodButtons.forEach((button) => {
+        button.classList.remove("is-active");
+        button.setAttribute("aria-pressed", "false");
+        const option = button.closest(".method-option");
+        if (option) option.classList.remove("is-active");
+      });
+      setMessage("", "");
+    }
+
+    function openBookingForm(method) {
+      showRoute(method, { openForm: true });
+      if (selectedOverviewDate) {
+        applyOverviewSlot(selectedOverviewDate, selectedOverviewTime);
+      }
+      form.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function createPeriodSummary(slots) {
+      return periodDefinitions.map((period) => {
+        const periodSlots = getPeriodSlots(slots, period);
+        const status = getAvailabilityMark(periodSlots.length);
+        return `<span class="period ${status.className}">${period.label}<b>${status.mark}</b></span>`;
+      }).join("");
+    }
+
+    function createSlotButtons(dateValue, slots) {
+      if (!slots.length) {
+        return '<p class="hint">この日は現在選べる空き時間がありません。</p>';
+      }
+
+      const buttons = slots.map((slot) => (
+        `<button class="slot-button" type="button" data-date="${dateValue}" data-time="${slot}">${slot}</button>`
+      )).join("");
+
+      return `<p class="hint">時間を押すと、下の予約フォームに反映されます。</p><div class="slot-buttons">${buttons}</div>`;
+    }
+
+    function createLoadingBox(text) {
+      return `<div class="loading-box"><span class="spinner" aria-hidden="true"></span><span>${text}</span></div>`;
+    }
+
+    function createAvailabilityError() {
+      return `
+        <div class="availability-error">
+          <span>空き状況を読み込めませんでした。通信状況によって一時的に失敗することがあります。</span>
+          <button class="retry-button" type="button" data-retry-availability>空き状況を再読み込み</button>
+        </div>
+      `;
+    }
+
+    function setAvailabilityMode(mode) {
+      const isCustom = mode === "custom";
+      weekModeToggle.classList.toggle("is-active", !isCustom);
+      dateSearchToggle.classList.toggle("is-active", isCustom);
+      weekModeToggle.setAttribute("aria-pressed", String(!isCustom));
+      dateSearchToggle.setAttribute("aria-pressed", String(isCustom));
+      dateSearch.classList.toggle("is-open", isCustom);
+    }
+
+    function populateTimeSelect(slots, preferredTime) {
+      timeSelect.innerHTML = '<option value="" disabled selected>時間を選択してください</option>';
+
+      if (!slots.length) {
+        timeSelect.innerHTML = '<option value="" disabled selected>この日は空き枠がありません</option>';
+        slotStatus.style.display = "block";
+        slotStatus.textContent = "別の日程を選択してください。";
+        return;
+      }
+
+      slots.forEach((slot) => {
+        const option = document.createElement("option");
+        option.value = slot;
+        option.textContent = slot;
+        timeSelect.appendChild(option);
+      });
+
+      if (preferredTime && slots.includes(preferredTime)) {
+        timeSelect.value = preferredTime;
+      }
+
+      slotStatus.style.display = "block";
+      slotStatus.textContent = "空き時間を選択できます。";
+    }
+
+    function applyOverviewSlot(dateValue, preferredTime) {
+      const slots = overviewSlotsByDate[dateValue] || [];
+      dateInput.value = dateValue;
+      populateTimeSelect(slots, preferredTime);
+    }
+
+    function renderAvailabilityResults(results, selectedDateValue) {
+      results.forEach((item) => {
+        overviewSlotsByDate[item.value] = item.slots;
+      });
+
+      availabilityList.innerHTML = results.map((item, index) => {
+        const isSelected = item.value === selectedDateValue;
+        return `
+          <article class="day-card ${isSelected ? "is-selected-day" : ""}">
+            <button class="day-button" type="button" data-detail="day-${index}">
+              <span class="day-head"><span>${item.label}${isSelected ? '<span class="selected-label">選択日</span>' : ""}</span><span>詳細</span></span>
+              <span class="periods">${createPeriodSummary(item.slots)}</span>
+            </button>
+            <div class="slot-detail" id="day-${index}">
+              ${createSlotButtons(item.value, item.slots)}
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    async function fetchAvailabilityRange(startDate, selectedDateValue) {
+      const dates = Array.from({ length: 7 }, (_, index) => {
+        const date = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + index);
+        return {
+          date,
+          value: formatDateValue(date),
+          label: formatDisplayDate(date)
+        };
+      });
+
+      availabilityList.innerHTML = createLoadingBox("空き状況を読み込み中です。少しお待ちください。");
 
       try {
-        const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
-        const result = await res.json();
+        const results = await Promise.all(dates.map(async (item) => {
+          const response = await fetch(`${GAS_URL}?date=${encodeURIComponent(item.value)}`);
+          if (!response.ok) throw new Error("Availability request failed");
+          const data = await response.json();
+          return {
+            ...item,
+            slots: Array.isArray(data.availableSlots) ? data.availableSlots : []
+          };
+        }));
+
+        renderAvailabilityResults(results, selectedDateValue);
+      } catch (err) {
+        availabilityList.innerHTML = createAvailabilityError();
+      }
+    }
+
+    async function loadCustomDateSlots() {
+      const dateValue = customDateInput.value;
+      if (!dateValue) return;
+
+      const selectedDate = new Date(`${dateValue}T00:00:00+09:00`);
+      const now = new Date();
+      const minDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      const desiredStartDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() - 3);
+      const startDate = desiredStartDate < minDate ? minDate : desiredStartDate;
+      await fetchAvailabilityRange(startDate, dateValue);
+    }
+
+    async function loadAvailabilityOverview() {
+      const now = new Date();
+      const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      await fetchAvailabilityRange(tomorrow, "");
+    }
+
+    async function retryAvailabilityLoad() {
+      if (dateSearch.classList.contains("is-open") && customDateInput.value) {
+        await loadCustomDateSlots();
+        return;
+      }
+
+      await loadAvailabilityOverview();
+    }
+
+    function openDatePicker(input) {
+      if (!input) return;
+      input.focus();
+      if (typeof input.showPicker === "function") {
+        try {
+          input.showPicker();
+        } catch (err) {
+          // Some browsers block showPicker unless it comes directly from a user action.
+        }
+      }
+    }
+
+    function fireTrialConversionOnce() {
+      if (conversionSent) return Promise.resolve();
+      conversionSent = true;
+
+      return new Promise((resolve) => {
+        const done = () => resolve();
+        setTimeout(done, 2200);
+
+        if (typeof gtag !== "function") {
+          done();
+          return;
+        }
+
+        gtag("event", "conversion", {
+          send_to: TRIAL_CONVERSION_SEND_TO,
+          event_callback: done,
+          event_timeout: 2000
+        });
+      });
+    }
+
+    function createEmailCompletionMessage(date, time, name, kana, email) {
+      const safeDate = escapeHtml(date);
+      const safeTime = escapeHtml(time);
+      const safeName = escapeHtml(name);
+      const safeKana = escapeHtml(kana);
+      const safeEmail = escapeHtml(email);
+
+      return `
+        <button class="restart-button" type="button" data-restart-page>最初に戻る</button>
+        <div class="result-box" data-completed-date="${safeDate}" data-completed-time="${safeTime}" data-completed-name="${safeName}" data-completed-kana="${safeKana}" data-completed-email="${safeEmail}">
+          <strong>予約完了</strong>
+          ■ 日時：${safeDate} ${safeTime}<br>
+          ■ お名前：${safeName} 様<br>
+          ■ 確認メール：${safeEmail}<br>
+
+          <div class="screenshot-reminder soft">
+            念のため、この画面をスクリーンショットで保存してください。<br>
+            確認メールが届かない場合は、迷惑メールフォルダやメールアドレスの入力間違いをご確認ください。
+          </div>
+
+          <div class="result-section">
+            <span class="result-section-title">店舗</span>
+            たまフィット<br>
+            香川県高松市今里町393-1 前川ビル1F
+            <a class="map-button" href="${GOOGLE_MAPS_URL}" target="_blank" rel="noopener">Googleマップで場所を見る</a>
+          </div>
+
+          <div class="result-section">
+            <span class="result-section-title">当日の持ち物</span>
+            <ul class="packing-list">
+              <li>動きやすい服装</li>
+              <li>室内用シューズ（なくてもOKです）</li>
+              <li>タオル</li>
+              <li>お飲み物</li>
+            </ul>
+          </div>
+
+          <div class="result-section">
+            <span class="result-section-title">確認メールについて</span>
+            入力いただいたメールアドレスへ確認メールを送信しました。届かない場合は、迷惑メールフォルダ・メールアドレスの入力間違い・受信設定をご確認ください。
+          </div>
+
+          <div class="after-contact-actions">
+            <button class="after-contact-button" type="button" data-resend-completion-email disabled>確認メールを送信しました</button>
+            <a class="after-contact-button line" href="${LINE_FRIEND_URL}" target="_blank" rel="noopener">LINEで連絡できるようにする</a>
+          </div>
+
+          <div class="after-email-message" id="afterEmailMessage">確認メールを送信しました。10秒後に再送できます。</div>
+        </div>
+      `;
+    }
+
+    function armResendButtons() {
+      window.setTimeout(() => {
+        document.querySelectorAll("[data-resend-completion-email]").forEach((button) => {
+          button.disabled = false;
+          button.textContent = "↻ 再送する";
+          button.dataset.resendReady = "true";
+        });
+      }, 10000);
+    }
+
+    function createNoContactCompletionMessage({ date, time, name, kana }) {
+      const safeDate = escapeHtml(date);
+      const safeTime = escapeHtml(time);
+      const safeName = escapeHtml(name);
+      const safeKana = escapeHtml(kana);
+
+      return `
+        <button class="restart-button" type="button" data-restart-page>最初に戻る</button>
+        <div class="result-box" data-completed-date="${safeDate}" data-completed-time="${safeTime}" data-completed-name="${safeName}" data-completed-kana="${safeKana}">
+          <strong>予約完了</strong>
+          ■ 日時：${safeDate} ${safeTime}<br>
+          ■ お名前：${safeName} 様<br>
+
+          <div class="screenshot-reminder">
+            この画面をスクリーンショットで保存してください。<br>
+            連絡先を入力していないため、確認メールやLINE通知は送信されません。<br>
+            ご質問・変更・キャンセルがある場合は、${OWNER_EMAIL} までメールしてください。
+          </div>
+
+          <div class="result-section">
+            <span class="result-section-title">店舗</span>
+            たまフィット<br>
+            香川県高松市今里町393-1 前川ビル1F
+            <a class="map-button" href="${GOOGLE_MAPS_URL}" target="_blank" rel="noopener">Googleマップで場所を見る</a>
+          </div>
+
+          <div class="result-section">
+            <span class="result-section-title">当日の持ち物</span>
+            <ul class="packing-list">
+              <li>動きやすい服装</li>
+              <li>室内用シューズ（なくてもOKです）</li>
+              <li>タオル</li>
+              <li>お飲み物</li>
+            </ul>
+          </div>
+
+          <div class="result-section">
+            <span class="result-section-title">連絡先を登録できます</span>
+            変更・キャンセル・質問がある場合は、メールまたはLINEからご連絡ください。後から連絡先を登録することもできます。
+          </div>
+
+          <div class="after-contact-actions">
+            <button class="after-contact-button" type="button" data-open-after-email>メールで控えを受け取る</button>
+            <a class="after-contact-button line" href="${LINE_FRIEND_URL}" target="_blank" rel="noopener">LINEで連絡できるようにする</a>
+          </div>
+
+          <div class="after-email-form" id="afterEmailForm">
+            <label for="afterEmailInput">控えを受け取るメールアドレス</label>
+            <input type="email" id="afterEmailInput" name="email" placeholder="example@mail.com" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false">
+            <p class="mail-caution"><strong>キャリアメールをご利用の方へ</strong>docomo、au、SoftBankなどのキャリアメールは、受信設定により確認メールが届かないことがあります。Gmail、iCloudメールなど、普段確認できるメールアドレスのご利用をおすすめします。</p>
+            <button class="submit-btn" type="button" data-send-after-email>この予約内容をメールで受け取る</button>
+            <div class="after-email-message" id="afterEmailMessage"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function isValidEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
+    }
+
+    async function sendAfterEmailConfirmation(box, button) {
+      const input = document.getElementById("afterEmailInput");
+      const message = document.getElementById("afterEmailMessage");
+      const email = input ? input.value.trim() : String(box.dataset.completedEmail || "").trim();
+
+      if (!email) {
+        message.className = "after-email-message error";
+        message.textContent = "メールアドレスを入力してください。";
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        message.className = "after-email-message error";
+        message.textContent = "メールアドレスの形式を確認してください。例：example@gmail.com";
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "送信中...";
+      message.className = "after-email-message";
+      message.textContent = "";
+
+      try {
+        const response = await fetch(GAS_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "sendTrialConfirmationEmailOnly",
+            name: box.dataset.completedName || "",
+            kana: box.dataset.completedKana || "",
+            date: box.dataset.completedDate || "",
+            time: box.dataset.completedTime || "",
+            email,
+            menu: "体験希望"
+          })
+        });
+        const result = await response.json();
+
         if (result.status === "success") {
-          msg.className = "success"; msg.textContent = "予約が完了しました！ご登録いただいた連絡先に後ほど確認のご連絡をいたします。";
-          document.getElementById('bookingForm').reset(); arrow.style.display = 'none';
-          emailInputArea.style.display = 'block'; phoneGroup.style.display = 'none';
-        } else { msg.className = "error"; msg.textContent = result.message; }
-      } catch (err) { msg.className = "error"; msg.textContent = "通信エラーが発生しました。Web上でテストしてください。"; } 
-      finally { btn.disabled = false; btn.textContent = "予約を確定する"; }
+          message.className = "after-email-message success";
+          message.textContent = "確認メールを送信しました。迷惑メールフォルダもあわせてご確認ください。届かない場合は、メールアドレスの入力間違いや受信設定をご確認ください。";
+          button.textContent = "確認メールを送信しました";
+          button.disabled = true;
+          window.setTimeout(() => {
+            button.disabled = false;
+            button.textContent = "↻ 再送する";
+            button.dataset.resendReady = "true";
+          }, 10000);
+        } else {
+          message.className = "after-email-message error";
+          message.textContent = result.message || "メールアドレスを確認してください。入力ミスや受信できないアドレスの可能性があります。";
+          button.disabled = false;
+          button.textContent = "この予約内容をメールで受け取る";
+        }
+      } catch (err) {
+        message.className = "after-email-message error";
+        message.textContent = "通信状況により送信できませんでした。メールアドレスを確認のうえ、もう一度お試しください。";
+        button.disabled = false;
+        button.textContent = "この予約内容をメールで受け取る";
+      }
+    }
+
+    async function loadSlots(preferredTime) {
+      if (!dateInput.value) return;
+
+      slotStatus.style.display = "block";
+      slotStatus.textContent = "空き状況を確認中...";
+      timeSelect.innerHTML = '<option value="" disabled selected>確認中...</option>';
+      setMessage("", "");
+
+      try {
+        const response = await fetch(`${GAS_URL}?date=${encodeURIComponent(dateInput.value)}`);
+        const data = await response.json();
+
+        if (data.availableSlots && data.availableSlots.length > 0) {
+          populateTimeSelect(data.availableSlots, preferredTime);
+        } else {
+          populateTimeSelect([], preferredTime);
+        }
+      } catch (err) {
+        timeSelect.innerHTML = '<option value="" disabled selected>空き状況を取得できませんでした</option>';
+        slotStatus.textContent = "通信エラーが発生しました。時間をおいて再度お試しください。";
+      }
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const method = methodSelect.value;
+      const name = document.getElementById("name").value.trim();
+      const kana = document.getElementById("kana").value.trim();
+      const date = dateInput.value;
+      const time = timeSelect.value;
+      const email = emailInput.value.trim();
+
+      if (method !== "email" && method !== "none") {
+        setMessage("error", "予約方法を選択してください。");
+        return;
+      }
+
+      if (!date || !time) {
+        setMessage("error", "希望日と希望時間を選択してください。");
+        return;
+      }
+
+      if (method === "email" && !email) {
+        setMessage("error", "メールアドレスを入力してください。");
+        return;
+      }
+
+      if (method === "email" && !isValidEmail(email)) {
+        setMessage("error", "メールアドレスの形式を確認してください。例：example@gmail.com");
+        return;
+      }
+
+      const payload = {
+        type: "trial",
+        name,
+        kana,
+        lineId: "",
+        lineName: "",
+        email: method === "email" ? email : "",
+        contactMethod: method === "email" ? "email" : "none",
+        date,
+        time,
+        duration: 60,
+        menu: "体験希望"
+      };
+
+      setLoading(true);
+      setMessage("", "");
+
+      try {
+        const response = await fetch(GAS_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+
+        if (result.status === "success") {
+          await fireTrialConversionOnce();
+
+          const completeMessage = method === "email"
+            ? createEmailCompletionMessage(date, time, name, kana, email)
+            : createNoContactCompletionMessage({ date, time, name, kana });
+
+          form.reset();
+          methodSelect.value = "";
+          showRoute("", { clearSlots: true });
+          showCompletion(completeMessage);
+          if (method === "email") armResendButtons();
+        } else {
+          setMessage("error", result.message || "予約を完了できませんでした。別の日程でお試しください。");
+        }
+      } catch (err) {
+        setMessage("error", "通信エラーが発生しました。予約が完了したか確認できないため、時間をおいて再度お試しください。");
+      } finally {
+        setLoading(false);
+      }
     });
 
-    dateInput.setAttribute('min', new Date().toISOString().split('T')[0]);
+    availabilityToggle.addEventListener("click", () => {
+      const isOpen = availabilitySection.classList.toggle("is-open");
+      availabilityToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    weekModeToggle.addEventListener("click", async () => {
+      setAvailabilityMode("week");
+      customDateInput.value = "";
+      await loadAvailabilityOverview();
+    });
+
+    dateSearchToggle.addEventListener("click", () => {
+      availabilitySection.classList.add("is-open");
+      availabilityToggle.setAttribute("aria-expanded", "true");
+      setAvailabilityMode("custom");
+      customDateInput.focus();
+    });
+
+    reservationToggle.addEventListener("click", () => {
+      const isOpen = reservationSection.classList.toggle("is-open");
+      reservationToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    contactToggle.addEventListener("click", () => {
+      const isOpen = contactSection.classList.toggle("is-open");
+      contactToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    reservationBody.addEventListener("click", (event) => {
+      const proceedButton = event.target.closest("[data-open-booking-form]");
+      if (proceedButton) {
+        openBookingForm(proceedButton.dataset.openBookingForm);
+        return;
+      }
+
+      const button = event.target.closest("[data-method-choice]");
+      if (!button) return;
+
+      const clickedMethod = button.dataset.methodChoice;
+      if (methodSelect.value === clickedMethod) {
+        closeRoute();
+        return;
+      }
+
+      showRoute(clickedMethod);
+    });
+
+    availabilityList.addEventListener("click", async (event) => {
+      const retryButton = event.target.closest("[data-retry-availability]");
+      const dayButton = event.target.closest("[data-detail]");
+      const slotButton = event.target.closest("[data-date][data-time]");
+
+      if (retryButton) {
+        await retryAvailabilityLoad();
+        return;
+      }
+
+      if (dayButton) {
+        const detail = document.getElementById(dayButton.dataset.detail);
+        if (detail) detail.classList.toggle("is-open");
+        return;
+      }
+
+      if (slotButton) {
+        selectedOverviewDate = slotButton.dataset.date;
+        selectedOverviewTime = slotButton.dataset.time;
+        applyOverviewSlot(selectedOverviewDate, selectedOverviewTime);
+
+        if (methodSelect.value !== "email" && methodSelect.value !== "none") {
+          reservationSection.classList.add("is-open");
+          reservationToggle.setAttribute("aria-expanded", "true");
+          const firstMethodButton = document.querySelector("[data-method-choice]");
+          if (firstMethodButton) firstMethodButton.focus();
+          setMessage("error", "予約方法を選んでから、カード内のボタンで予約フォームへ進めます。");
+          reservationSection.scrollIntoView({ behavior: "smooth", block: "center" });
+          return;
+        }
+
+        form.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+
+    customSlotResult.addEventListener("click", async (event) => {
+      const slotButton = event.target.closest("[data-date][data-time]");
+      if (!slotButton) return;
+
+      selectedOverviewDate = slotButton.dataset.date;
+      selectedOverviewTime = slotButton.dataset.time;
+      applyOverviewSlot(selectedOverviewDate, selectedOverviewTime);
+
+      if (methodSelect.value !== "email" && methodSelect.value !== "none") {
+        reservationSection.classList.add("is-open");
+        reservationToggle.setAttribute("aria-expanded", "true");
+        const firstMethodButton = document.querySelector("[data-method-choice]");
+        if (firstMethodButton) firstMethodButton.focus();
+        setMessage("error", "予約方法を選んでから、カード内のボタンで予約フォームへ進めます。");
+        reservationSection.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+
+      form.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    msg.addEventListener("click", async (event) => {
+      const openEmailButton = event.target.closest("[data-open-after-email]");
+      const sendEmailButton = event.target.closest("[data-send-after-email]");
+      const resendCompletionButton = event.target.closest("[data-resend-completion-email]");
+      const restartButton = event.target.closest("[data-restart-page]");
+
+      if (restartButton) {
+        window.location.reload();
+        return;
+      }
+
+      if (openEmailButton) {
+        const afterEmailForm = document.getElementById("afterEmailForm");
+        const afterEmailInput = document.getElementById("afterEmailInput");
+        if (afterEmailForm) afterEmailForm.classList.add("is-open");
+        if (afterEmailInput) afterEmailInput.focus();
+        return;
+      }
+
+      if (sendEmailButton) {
+        if (sendEmailButton.dataset.resendReady === "true" && !window.confirm("確認メールを再送しますか？")) {
+          return;
+        }
+        delete sendEmailButton.dataset.resendReady;
+        const box = sendEmailButton.closest("[data-completed-date]");
+        if (box) await sendAfterEmailConfirmation(box, sendEmailButton);
+        return;
+      }
+
+      if (resendCompletionButton) {
+        if (resendCompletionButton.dataset.resendReady !== "true") return;
+        if (!window.confirm("確認メールを再送しますか？")) return;
+        delete resendCompletionButton.dataset.resendReady;
+        const box = resendCompletionButton.closest("[data-completed-date]");
+        if (box) await sendAfterEmailConfirmation(box, resendCompletionButton);
+      }
+    });
+
+    dateInput.addEventListener("change", loadSlots);
+    customDateInput.addEventListener("change", loadCustomDateSlots);
+    dateInput.addEventListener("click", () => openDatePicker(dateInput));
+    customDateInput.addEventListener("click", () => openDatePicker(customDateInput));
+
+    setDateMin();
+    showRoute("", { clearSlots: true });
+    loadAvailabilityOverview();
   </script>
 </body>
 </html>
