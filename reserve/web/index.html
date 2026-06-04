@@ -965,12 +965,12 @@
       border-radius: 8px;
       overflow: hidden;
       background: #fff;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, background 0.15s ease;
     }
 
     .method-choice {
       width: 100%;
-      min-height: 76px;
+      min-height: 86px;
       border: 0;
       border-radius: 0;
       padding: 14px;
@@ -980,7 +980,32 @@
       text-align: left;
       cursor: pointer;
       display: grid;
+      grid-template-columns: 48px minmax(0, 1fr);
+      align-items: center;
+      gap: 12px;
+    }
+
+    .method-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #fff;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: 0;
+      box-shadow: 0 8px 16px rgba(24, 32, 42, 0.12);
+      white-space: nowrap;
+    }
+
+    .method-copy {
+      display: grid;
       gap: 4px;
+      min-width: 0;
     }
 
     .method-choice strong {
@@ -992,7 +1017,7 @@
       line-height: 1.35;
     }
 
-    .method-choice > span {
+    .method-copy > span {
       color: var(--muted);
       font-size: 12px;
       font-weight: 700;
@@ -1000,9 +1025,13 @@
     }
 
     .method-option.line {
-      background: #fff;
-      border-color: #d8e8df;
+      background: linear-gradient(180deg, #fbfffd, #f2fbf6);
+      border-color: #bfe8d0;
       color: #0b6635;
+    }
+
+    .method-option.line .method-icon {
+      background: linear-gradient(180deg, #18d765, #06a84a);
     }
 
     .method-option.line.is-active .line-card {
@@ -1010,9 +1039,16 @@
     }
 
     .method-option.email {
-      background: #fff;
-      border-color: #d8e3ee;
+      background: linear-gradient(180deg, #fbfdff, #f2f7fd);
+      border-color: #cbdff4;
       color: #104f8f;
+    }
+
+    .method-option.email .method-icon {
+      background: linear-gradient(180deg, #4e9be8, #2d7fd3);
+      font-size: 20px;
+      line-height: 0;
+      padding-bottom: 2px;
     }
 
     .method-option.email.is-active .email-card {
@@ -1020,9 +1056,20 @@
     }
 
     .method-option.none {
-      background: #fff;
-      border-color: #eadcdc;
+      background: linear-gradient(180deg, #fffdfd, #fbf5f5);
+      border-color: #ead1d1;
       color: #8b2d2d;
+    }
+
+    .method-option.is-temporarily-hidden {
+      display: none;
+    }
+
+    .method-option.none .method-icon {
+      background: linear-gradient(180deg, #9aa2ad, #667080);
+      font-size: 24px;
+      line-height: 0;
+      padding-bottom: 2px;
     }
 
     .method-option.none.is-active .none-card {
@@ -1517,8 +1564,11 @@
               <div class="method-choice-grid" role="group" aria-label="予約方法を選択">
                 <div class="method-option line">
                   <button class="method-choice" type="button" data-method-choice="line">
-                    <strong>LINEで予約・通知を受け取る<span class="recommend-badge">おすすめ</span></strong>
-                    <span>確認メッセージや日程変更の相談がしやすい方法です。</span>
+                    <span class="method-icon" aria-hidden="true">LINE</span>
+                    <span class="method-copy">
+                      <strong>LINEで予約する<span class="recommend-badge">おすすめ</span></strong>
+                      <span>通知や日程変更の相談がしやすい方法です。</span>
+                    </span>
                   </button>
                   <div class="method-card line-card" id="lineRoute">
                     <h2>LINEで予約する<span class="recommend-badge">おすすめ</span></h2>
@@ -1531,8 +1581,11 @@
                 </div>
                 <div class="method-option email">
                   <button class="method-choice" type="button" data-method-choice="email">
-                    <strong>メールで予約する</strong>
-                    <span>LINEを使いたくない方はこちら。確認メールを受け取れます。</span>
+                    <span class="method-icon" aria-hidden="true">@</span>
+                    <span class="method-copy">
+                      <strong>メールで予約する</strong>
+                      <span>LINEを使いたくない方はこちら。確認メールを受け取れます。</span>
+                    </span>
                   </button>
                   <div class="method-card email-card" id="emailRoute">
                     <h2>メールで予約する</h2>
@@ -1540,10 +1593,13 @@
                     <button class="method-proceed email-proceed" type="button" data-open-booking-form="email">メールで予約へ進む</button>
                   </div>
                 </div>
-                <div class="method-option none">
+                <div class="method-option none is-temporarily-hidden">
                   <button class="method-choice" type="button" data-method-choice="none">
-                    <strong>連絡先なしで予約する</strong>
-                    <span>確認通知は届きません。画面保存できる方のみご利用ください。</span>
+                    <span class="method-icon" aria-hidden="true">—</span>
+                    <span class="method-copy">
+                      <strong>連絡先なしで予約する</strong>
+                      <span>確認通知は届きません。予約完了画面をスクリーンショット等で保存してください。</span>
+                    </span>
                   </button>
                   <div class="method-card none-card" id="noneRoute">
                     <h2>連絡先を入力せずに予約する</h2>
@@ -1616,7 +1672,8 @@
             <div class="availability-reserve">
               <p>行けそうな時間があれば、予約方法を選んで進めます。</p>
               <button class="availability-reserve-button" type="button" data-open-reservation>無料体験を予約する</button>
-              <span>LINE・メール・連絡先なしから選べます。</span>
+              <!-- 連絡先なし予約を戻す場合: LINE・メール・連絡先なしから選べます。 -->
+              <span>LINE・メールから選べます。</span>
             </div>
           </div>
         </section>
