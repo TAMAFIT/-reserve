@@ -19,9 +19,12 @@
       color-scheme: light;
       --ink: #18202a;
       --muted: #647282;
-      --line: #d7e3dc;
-      --blue: #0ba84f;
-      --blue-dark: #066935;
+      --line: #dde8e1;
+      --soft-line: #e1e9e4;
+      --surface: #ffffff;
+      --surface-green: #f7faf8;
+      --blue: #0f8a45;
+      --blue-dark: #0b6635;
       --green: #06a34f;
       --red: #c73737;
       --gold: #0a7d3f;
@@ -37,7 +40,7 @@
       font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
       color: var(--ink);
       background:
-        linear-gradient(180deg, rgba(250, 253, 251, 0.88), rgba(236, 247, 240, 0.9)),
+        linear-gradient(180deg, rgba(250, 252, 251, 0.9), rgba(244, 248, 246, 0.92)),
         url("../../images/18.webp") center / cover fixed;
     }
 
@@ -51,24 +54,38 @@
       background: rgba(255, 255, 255, 0.95);
       border: 1px solid rgba(255, 255, 255, 0.86);
       border-radius: 8px;
-      box-shadow: 0 18px 42px rgba(24, 32, 42, 0.18);
+      box-shadow: 0 18px 42px rgba(24, 32, 42, 0.16);
       overflow: hidden;
       backdrop-filter: blur(5px);
     }
 
     .header {
-      padding: 28px 22px 22px;
-      border-bottom: 3px solid var(--blue);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(250, 255, 252, 0.98));
+      padding: 26px 22px 24px;
+      border-bottom: 2px solid #19a45a;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(15, 138, 69, 0.08), transparent 34%),
+        radial-gradient(circle at 84% 24%, rgba(15, 138, 69, 0.08), transparent 30%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(250, 252, 251, 0.98));
       text-align: center;
     }
 
-    .eyebrow {
-      margin: 0 0 10px;
-      color: var(--gold);
-      font-size: 16px;
-      font-weight: 900;
-      letter-spacing: 0;
+    .brand-logo {
+      width: 86px;
+      height: 86px;
+      margin: 0 auto 12px;
+      border: 1px solid rgba(15, 138, 69, 0.2);
+      border-radius: 18px;
+      padding: 4px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 10px 24px rgba(24, 32, 42, 0.1);
+    }
+
+    .brand-logo img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 14px;
+      object-fit: contain;
     }
 
     h1 {
@@ -87,9 +104,51 @@
       word-break: break-all;
     }
 
+    .step-guide {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+      align-items: center;
+      gap: 6px;
+      padding: 14px 22px 0;
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    .step-item {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 4px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.25;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+
+    .step-item.is-active {
+      border-color: var(--blue);
+      background: #f3faf6;
+      color: var(--blue-dark);
+      box-shadow: 0 0 0 2px rgba(15, 138, 69, 0.12);
+    }
+
+    .step-arrow {
+      color: var(--blue-dark);
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
     .content,
     form {
       padding: 22px;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
     }
 
     .form-group {
@@ -222,14 +281,18 @@
     }
 
     .availability {
-      margin-top: 18px;
-      padding: 14px;
+      order: 1;
+      min-width: 0;
+      margin-top: 0;
+      padding: 15px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: rgba(255, 255, 255, 0.82);
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 12px 24px rgba(24, 32, 42, 0.08);
     }
 
     .contact-panel {
+      order: 3;
       margin-top: 18px;
       padding: 14px;
       border: 1px solid var(--line);
@@ -337,28 +400,40 @@
       display: block;
     }
 
+    .action-panel {
+      order: 2;
+    }
+
     .availability-list {
       display: grid;
-      gap: 8px;
+      gap: 10px;
       margin-top: 12px;
     }
 
     .day-card {
-      border: 1px solid var(--line);
+      min-width: 0;
+      border: 1px solid var(--soft-line);
       border-radius: 8px;
       background: #fff;
       overflow: hidden;
+      box-shadow: 0 8px 18px rgba(24, 32, 42, 0.06);
+    }
+
+    .day-card.is-detail-open {
+      border-color: #d7e3dc;
+      border-left: 4px solid #19a45a;
+      box-shadow: 0 12px 24px rgba(24, 32, 42, 0.09);
     }
 
     .day-card.is-selected-day {
       border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(6, 199, 85, 0.14);
+      box-shadow: 0 0 0 2px rgba(15, 138, 69, 0.12);
     }
 
     .day-button {
       width: 100%;
       border: 0;
-      background: transparent;
+      background: #fff;
       padding: 12px;
       font: inherit;
       color: var(--ink);
@@ -375,6 +450,19 @@
       font-weight: 900;
     }
 
+    .day-action {
+      flex: 0 0 auto;
+      border-radius: 999px;
+      padding: 5px 10px;
+      border: 1px solid #d7dde3;
+      background: #fff;
+      color: #374151;
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
     .selected-label {
       display: inline-block;
       margin-left: 6px;
@@ -388,16 +476,19 @@
 
     .periods {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 6px;
     }
 
     .period {
+      min-width: 0;
       display: grid;
       place-items: center;
-      min-height: 34px;
-      border-radius: 7px;
-      background: #f3f6f9;
+      min-height: 46px;
+      border-radius: 8px;
+      padding: 6px 3px;
+      border: 1px solid #e5ece8;
+      background: #fff;
       color: var(--muted);
       font-size: 12px;
       font-weight: 800;
@@ -407,74 +498,232 @@
 
     .period b {
       display: block;
-      font-size: 14px;
+      margin-top: 3px;
+      font-size: 11px;
       line-height: 1.1;
+      white-space: nowrap;
     }
 
     .period.is-open {
-      background: #eef8f2;
-      color: #16603d;
+      border-color: #d5eadc;
+      background: #fff;
+      color: #0f6b3a;
     }
 
     .period.is-limited {
-      background: #fff8e6;
-      color: #72520d;
+      border-color: #f2d8a0;
+      background: #fff6df;
+      color: #8b5d05;
     }
 
     .period.is-closed {
-      background: #f6f1f1;
-      color: #8a3535;
+      border-color: #e7d4d4;
+      background: #f8eeee;
+      color: #9b2f2f;
     }
 
     .slot-detail {
       display: none;
       border-top: 1px solid var(--line);
       padding: 12px;
-      background: #f8fdf9;
+      background: #fbfcfb;
     }
 
     .slot-detail.is-open {
       display: block;
     }
 
-    .slot-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
+    .slot-detail-note {
+      margin: 0 0 10px;
+      color: #374151;
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1.4;
+      text-align: center;
+      white-space: nowrap;
     }
 
-    .slot-button {
-      min-height: 38px;
-      border: 1px solid #bfe8cf;
+    .slot-periods {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 2px 0 0;
+    }
+
+    .slot-range-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 2px 0 0;
+    }
+
+    .slot-range {
+      display: grid;
+      grid-template-columns: 74px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      padding: 10px 11px;
+      border: 1px solid #e1e9e4;
       border-radius: 8px;
-      padding: 8px 12px;
       background: #fff;
+      box-shadow: 0 5px 12px rgba(24, 32, 42, 0.04);
+    }
+
+    .slot-range-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: #eff7f2;
       color: var(--blue-dark);
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .slot-range-time {
+      color: var(--ink);
+      font-size: 17px;
+      font-weight: 900;
+      line-height: 1.4;
+      letter-spacing: 0;
+      word-break: keep-all;
+    }
+
+    .slot-period {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 8px;
+      align-items: start;
+      padding: 9px 0;
+      border-top: 1px solid #dcece3;
+    }
+
+    .slot-period:first-child {
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .slot-period-title {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 24px;
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: #e8f7ee;
+      color: var(--blue-dark);
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .slot-time-list {
+      min-width: 0;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.75;
+      overflow-wrap: anywhere;
+      word-break: keep-all;
+    }
+
+    .slot-time-list span {
+      display: inline;
+      color: var(--blue-dark);
+      white-space: nowrap;
+    }
+
+    .slot-detail-cta {
+      margin-top: 14px;
+      padding: 13px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid #e1e9e4;
+      text-align: center;
+      box-shadow: 0 8px 18px rgba(24, 32, 42, 0.06);
+    }
+
+    .slot-detail-cta p {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+
+    .slot-detail-reserve-button {
+      width: 100%;
+      min-height: 50px;
+      border: 0;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #17b85f, #0f8a45);
+      color: #fff;
       font: inherit;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 900;
       cursor: pointer;
+      box-shadow: 0 8px 18px rgba(15, 138, 69, 0.28);
     }
 
-    .slot-button:hover,
-    .slot-button:focus {
-      outline: 3px solid rgba(6, 199, 85, 0.18);
-      border-color: var(--blue);
+    .availability-reserve {
+      min-width: 0;
+      margin-top: 14px;
+      padding: 15px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid #e1e9e4;
+      text-align: center;
+      box-shadow: 0 8px 18px rgba(24, 32, 42, 0.06);
+    }
+
+    .availability-reserve p {
+      margin: 0 0 10px;
+      color: var(--blue-dark);
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+    }
+
+    .availability-reserve-button {
+      width: 100%;
+      min-height: 54px;
+      border: 0;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #17b85f, #0f8a45);
+      color: #fff;
+      font: inherit;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(15, 138, 69, 0.28);
+    }
+
+    .availability-reserve span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.45;
     }
 
     .date-search {
       display: none;
       margin: 0 0 14px;
       padding: 12px;
-      border: 1px solid #bfe8cf;
+      border: 1px solid var(--line);
       border-radius: 8px;
-      background: #f8fdf9;
+      background: #fff;
     }
 
     .availability-mode-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
       margin-bottom: 12px;
     }
@@ -482,19 +731,20 @@
     .mode-card,
     .date-search-toggle {
       width: 100%;
-      min-height: 74px;
-      border: 1px solid #bfe8cf;
+      min-width: 0;
+      min-height: 62px;
+      border: 1px solid var(--line);
       border-radius: 8px;
       background: #fff;
-      color: var(--blue-dark);
+      color: var(--ink);
       font: inherit;
       font-weight: 900;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 10px;
+      gap: 7px;
+      padding: 9px;
       text-align: left;
     }
 
@@ -504,20 +754,20 @@
 
     .mode-card {
       color: var(--ink);
-      background: #f8fdf9;
+      background: #fff;
     }
 
     .mode-card.is-active,
     .date-search-toggle.is-active {
       border-color: var(--blue);
-      background: #e8f7ee;
+      background: #f3faf6;
       color: var(--blue-dark);
-      box-shadow: 0 0 0 3px rgba(6, 199, 85, 0.14);
+      box-shadow: 0 0 0 2px rgba(15, 138, 69, 0.12);
     }
 
     .calendar-svg {
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       flex: 0 0 auto;
       display: block;
     }
@@ -529,8 +779,9 @@
     }
 
     .date-search-copy span {
-      font-size: 15px;
+      font-size: 14px;
       line-height: 1.25;
+      overflow-wrap: anywhere;
     }
 
     .date-search-copy small {
@@ -551,6 +802,40 @@
 
     .date-search.is-open {
       display: block;
+    }
+
+    .date-picker-shell {
+      position: relative;
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .date-picker-shell input[type="date"] {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .date-picker-display {
+      display: flex;
+      align-items: center;
+      min-height: 48px;
+      padding: 0 14px;
+      color: var(--ink);
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1.3;
+      pointer-events: none;
+    }
+
+    .date-picker-display.is-empty {
+      color: var(--muted);
     }
 
     .custom-slot-result {
@@ -625,7 +910,7 @@
       padding: 0 14px 14px;
       border: 0;
       background: transparent;
-      min-height: 152px;
+      min-height: auto;
     }
 
     .method-card h2 {
@@ -671,12 +956,12 @@
 
     .method-choice-grid {
       display: grid;
-      gap: 12px;
-      margin-top: 8px;
+      gap: 10px;
+      margin-top: 10px;
     }
 
     .method-option {
-      border: 2px solid transparent;
+      border: 1px solid var(--line);
       border-radius: 8px;
       overflow: hidden;
       background: #fff;
@@ -688,7 +973,7 @@
       min-height: 76px;
       border: 0;
       border-radius: 0;
-      padding: 13px 14px;
+      padding: 14px;
       background: transparent;
       color: var(--ink);
       font: inherit;
@@ -702,6 +987,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
       font-size: 16px;
       line-height: 1.35;
     }
@@ -714,8 +1000,8 @@
     }
 
     .method-option.line {
-      background: linear-gradient(180deg, #f0fff6, #e8faef);
-      border-color: #8bddaa;
+      background: #fff;
+      border-color: #d8e8df;
       color: #0b6635;
     }
 
@@ -724,8 +1010,8 @@
     }
 
     .method-option.email {
-      background: linear-gradient(180deg, #f1f7ff, #eaf3ff);
-      border-color: #9dc5f3;
+      background: #fff;
+      border-color: #d8e3ee;
       color: #104f8f;
     }
 
@@ -734,8 +1020,8 @@
     }
 
     .method-option.none {
-      background: linear-gradient(180deg, #fff6f6, #ffeded);
-      border-color: #eda9a9;
+      background: #fff;
+      border-color: #eadcdc;
       color: #8b2d2d;
     }
 
@@ -748,8 +1034,8 @@
     }
 
     .method-option.line.is-active {
-      border-color: #06c755;
-      box-shadow: 0 8px 18px rgba(6, 199, 85, 0.18);
+      border-color: #13a852;
+      box-shadow: 0 8px 18px rgba(15, 138, 69, 0.15);
     }
 
     .method-option.email.is-active {
@@ -763,8 +1049,8 @@
     }
 
     .line-card {
-      background: #effbf4;
-      border-color: #bee8d2;
+      background: transparent;
+      border-color: transparent;
     }
 
     .line-card h2 {
@@ -796,7 +1082,7 @@
       margin-left: 8px;
       padding: 2px 7px;
       border-radius: 999px;
-      background: var(--line-green);
+      background: #13a852;
       color: #fff;
       font-size: 11px;
       vertical-align: 2px;
@@ -819,9 +1105,9 @@
     .line-flow {
       display: block;
       margin-top: 8px;
-      padding: 6px 8px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.72);
+      padding: 8px;
+      border-radius: 8px;
+      background: #f4faf6;
       color: #0b6635;
       font-size: 11px;
       font-weight: 900;
@@ -829,6 +1115,39 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    .reservation-context {
+      display: none;
+      margin: 0 0 12px;
+      padding: 11px 12px;
+      border: 1px solid #dfe8e3;
+      border-radius: 8px;
+      background: #fbfcfb;
+      color: #374151;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.55;
+    }
+
+    .reservation-context.is-visible {
+      display: block;
+    }
+
+    .reservation-context strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .reservation-context span {
+      display: block;
+      color: #5f6b76;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.45;
     }
 
     .line-flow span {
@@ -943,30 +1262,33 @@
 
     .result-box {
       margin-top: 12px;
-      padding: 14px;
+      padding: 16px;
       border-radius: 8px;
-      background: #f5fbf7;
-      border: 1px solid #bee8d2;
-      color: #174f34;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--ink);
       text-align: left;
+      box-shadow: 0 10px 22px rgba(24, 32, 42, 0.08);
     }
 
     .result-box strong {
       display: block;
-      margin-bottom: 6px;
-      color: #123826;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 18px;
+      line-height: 1.35;
     }
 
     .result-section {
       margin-top: 12px;
       padding-top: 12px;
-      border-top: 1px solid #bee8d2;
+      border-top: 1px solid var(--line);
     }
 
     .result-section-title {
       display: block;
       margin-bottom: 6px;
-      color: #123826;
+      color: var(--ink);
       font-size: 14px;
       font-weight: 900;
     }
@@ -977,7 +1299,7 @@
       margin-top: 10px;
       padding: 12px 14px;
       border-radius: 8px;
-      background: var(--blue);
+      background: linear-gradient(180deg, #17b85f, #0f8a45);
       color: #fff;
       text-align: center;
       text-decoration: none;
@@ -987,7 +1309,7 @@
     .packing-list {
       margin: 6px 0 0;
       padding-left: 18px;
-      color: #174f34;
+      color: #374151;
       font-size: 13px;
       line-height: 1.7;
     }
@@ -1002,7 +1324,7 @@
       border-radius: 8px;
       padding: 9px 14px;
       background: #fff;
-      color: var(--blue-dark);
+      color: #374151;
       font: inherit;
       font-size: 13px;
       font-weight: 900;
@@ -1029,9 +1351,9 @@
     }
 
     .screenshot-reminder.soft {
-      border-color: #bee8d2;
-      background: #f4fbf7;
-      color: #174f34;
+      border-color: #dfe8e3;
+      background: #fbfcfb;
+      color: #374151;
     }
 
     .after-contact-actions {
@@ -1043,11 +1365,11 @@
 
     .after-contact-button {
       min-height: 46px;
-      border: 1px solid #bfe8cf;
+      border: 1px solid #dfe8e3;
       border-radius: 8px;
       padding: 10px;
       background: #fff;
-      color: var(--blue-dark);
+      color: #374151;
       font: inherit;
       font-size: 13px;
       font-weight: 900;
@@ -1066,7 +1388,7 @@
       display: none;
       margin-top: 12px;
       padding-top: 12px;
-      border-top: 1px solid #bee8d2;
+      border-top: 1px solid var(--line);
     }
 
     .after-email-form.is-open {
@@ -1096,8 +1418,63 @@
 
     @media (max-width: 420px) {
       .page { padding: 12px 10px 24px; }
-      .header, .content, form { padding-left: 16px; padding-right: 16px; }
+      .header, .content, form { padding-left: 12px; padding-right: 12px; }
+      .brand-logo {
+        width: 78px;
+        height: 78px;
+        margin-bottom: 12px;
+        border-radius: 16px;
+      }
+      .brand-logo img {
+        border-radius: 12px;
+      }
       h1 { font-size: 23px; }
+      .step-guide {
+        gap: 4px;
+        padding: 12px 10px 0;
+      }
+      .step-item {
+        padding: 7px 2px;
+        font-size: 10.5px;
+      }
+      .step-arrow {
+        font-size: 12px;
+      }
+      .availability {
+        padding: 10px;
+      }
+      .availability-mode-grid {
+        grid-template-columns: 1fr;
+      }
+      .mode-card,
+      .date-search-toggle {
+        min-height: 58px;
+      }
+      .calendar-svg {
+        width: 26px;
+        height: 26px;
+      }
+      .day-button {
+        padding: 10px;
+      }
+      .day-head {
+        gap: 6px;
+      }
+      .day-action {
+        padding: 4px 7px;
+        font-size: 10.5px;
+      }
+      .periods {
+        gap: 4px;
+      }
+      .period {
+        min-height: 43px;
+        padding: 5px 2px;
+        font-size: 11px;
+      }
+      .period b {
+        font-size: 10.5px;
+      }
       .after-contact-actions { grid-template-columns: 1fr; }
       .contact-actions { grid-template-columns: 1fr; }
     }
@@ -1107,10 +1484,20 @@
   <main class="page">
     <section class="panel" aria-label="無料体験予約">
       <header class="header">
-        <p class="eyebrow">たまフィット</p>
-        <h1>無料体験予約</h1>
-        <p class="lead">予約方法を選んでください。<br>LINE、メール、連絡先なしから選べます。</p>
+        <div class="brand-logo">
+          <img src="assets/tamafit-logo.jpg" alt="たまフィット パーソナルジム">
+        </div>
+        <h1>無料体験の<br>空き状況確認</h1>
+        <p class="lead">見るだけでも大丈夫です。<br>空いている時間を確認してから予約できます。</p>
       </header>
+
+      <div class="step-guide" aria-label="予約までの流れ">
+        <span class="step-item is-active" data-step="1">1 空きを見る</span>
+        <span class="step-arrow" aria-hidden="true">→</span>
+        <span class="step-item" data-step="2">2 方法を選ぶ</span>
+        <span class="step-arrow" aria-hidden="true">→</span>
+        <span class="step-item" data-step="3">3 情報入力</span>
+      </div>
 
       <div class="content">
         <section class="action-panel" id="reservationSection" aria-label="予約方法">
@@ -1118,6 +1505,7 @@
             予約する
           </button>
           <div class="reservation-body" id="reservationBody">
+            <div class="reservation-context" id="reservationContext"></div>
             <div class="form-group">
               <label>予約方法<span class="badge optional">任意</span></label>
               <select class="method-select-hidden" id="methodSelect" aria-hidden="true" tabindex="-1">
@@ -1129,12 +1517,12 @@
               <div class="method-choice-grid" role="group" aria-label="予約方法を選択">
                 <div class="method-option line">
                   <button class="method-choice" type="button" data-method-choice="line">
-                    <strong>LINEで予約・連絡を受け取る<span class="recommend-badge">おすすめ</span></strong>
-                    <span>友だち追加後、LINEの予約メニューから進めます。</span>
+                    <strong>LINEで予約・通知を受け取る<span class="recommend-badge">おすすめ</span></strong>
+                    <span>確認メッセージや日程変更の相談がしやすい方法です。</span>
                   </button>
                   <div class="method-card line-card" id="lineRoute">
                     <h2>LINEで予約する<span class="recommend-badge">おすすめ</span></h2>
-                    <p>友だち追加後、LINE画面下のリッチメニューから「無料体験予約」を押してください。</p>
+                    <p>友だち追加後、LINE画面下のリッチメニューから「無料体験予約」を押してください。確認や変更相談をLINEで行えます。</p>
                     <div class="line-flow" aria-label="LINE予約の流れ">
                       <span>友だち追加 → リッチメニュー → 無料体験予約</span>
                     </div>
@@ -1143,19 +1531,19 @@
                 </div>
                 <div class="method-option email">
                   <button class="method-choice" type="button" data-method-choice="email">
-                    <strong>メールで予約・連絡を受け取る</strong>
-                    <span>確認メールを受け取りたい方はこちら。</span>
+                    <strong>メールで予約する</strong>
+                    <span>LINEを使いたくない方はこちら。確認メールを受け取れます。</span>
                   </button>
                   <div class="method-card email-card" id="emailRoute">
-                    <h2>メールで予約・連絡を受け取る</h2>
-                    <p>予約完了後、入力いただいたメールアドレスへ確認メールを送信します。Gmail、iCloudメールなど、普段確認できるメールアドレスをおすすめします。</p>
+                    <h2>メールで予約する</h2>
+                    <p>予約完了後、入力いただいたメールアドレスへ確認メールを送信します。普段確認できるメールアドレスをおすすめします。</p>
                     <button class="method-proceed email-proceed" type="button" data-open-booking-form="email">メールで予約へ進む</button>
                   </div>
                 </div>
                 <div class="method-option none">
                   <button class="method-choice" type="button" data-method-choice="none">
                     <strong>連絡先なしで予約する</strong>
-                    <span>確認メールやLINE通知は届きません。</span>
+                    <span>確認通知は届きません。画面保存できる方のみご利用ください。</span>
                   </button>
                   <div class="method-card none-card" id="noneRoute">
                     <h2>連絡先を入力せずに予約する</h2>
@@ -1182,9 +1570,9 @@
           </div>
         </section>
 
-        <section class="availability" id="availabilitySection" aria-label="今週の空き目安">
+        <section class="availability is-open" id="availabilitySection" aria-label="今週の空き目安">
           <div class="availability-header">
-            <button class="availability-toggle" id="availabilityToggle" type="button" aria-expanded="false">
+            <button class="availability-toggle" id="availabilityToggle" type="button" aria-expanded="true">
               空き状況を見る
             </button>
           </div>
@@ -1213,15 +1601,22 @@
             <div class="date-search" id="dateSearch">
               <div class="date-search-body" id="dateSearchBody">
                 <label for="customDate">別の日を選択</label>
-                <input type="date" id="customDate">
+                <div class="date-picker-shell">
+                  <input type="date" id="customDate">
+                  <span class="date-picker-display is-empty" id="customDateDisplay">日付を選択してください</span>
+                </div>
                 <div class="custom-slot-result" id="customSlotResult">
                   <p class="hint">日付を選ぶと空き時間を確認できます。</p>
                 </div>
               </div>
             </div>
-            <p class="hint">○ 空きあり / △ 残りわずか / × 空きなし<br>日付を押すと、選べる時間を確認できます。</p>
             <div class="availability-list" id="availabilityList">
             <div class="loading-box"><span class="spinner" aria-hidden="true"></span><span>空き状況を読み込み中です。少しお待ちください。</span></div>
+            </div>
+            <div class="availability-reserve">
+              <p>行けそうな時間があれば、予約方法を選んで進めます。</p>
+              <button class="availability-reserve-button" type="button" data-open-reservation>無料体験を予約する</button>
+              <span>LINE・メール・連絡先なしから選べます。</span>
             </div>
           </div>
         </section>
@@ -1288,6 +1683,7 @@
     const weekModeToggle = document.getElementById("weekModeToggle");
     const dateSearchToggle = document.getElementById("dateSearchToggle");
     const customDateInput = document.getElementById("customDate");
+    const customDateDisplay = document.getElementById("customDateDisplay");
     const customSlotResult = document.getElementById("customSlotResult");
     const reservationSection = document.getElementById("reservationSection");
     const reservationToggle = document.getElementById("reservationToggle");
@@ -1310,6 +1706,8 @@
     const emailInput = document.getElementById("email");
     const bookingNotice = document.getElementById("bookingNotice");
     const bookingModeBanner = document.getElementById("bookingModeBanner");
+    const reservationContext = document.getElementById("reservationContext");
+    const stepItems = Array.from(document.querySelectorAll("[data-step]"));
 
     let conversionSent = false;
     let selectedOverviewDate = "";
@@ -1328,7 +1726,14 @@
       msg.innerHTML = html;
     }
 
+    function setStep(step) {
+      stepItems.forEach((item) => {
+        item.classList.toggle("is-active", item.dataset.step === String(step));
+      });
+    }
+
     function showCompletion(html) {
+      setStep(3);
       if (content) content.classList.add("is-complete");
       form.classList.add("is-complete");
       msg.className = "success is-complete";
@@ -1358,6 +1763,25 @@
       return `${date.getMonth() + 1}/${date.getDate()}(${weekdays[date.getDay()]})`;
     }
 
+    function formatDateLabelFromValue(dateValue) {
+      if (!dateValue) return "";
+      const date = new Date(`${dateValue}T00:00:00+09:00`);
+      if (Number.isNaN(date.getTime())) return "";
+      return formatDisplayDate(date);
+    }
+
+    function updateReservationContext() {
+      if (!reservationContext) return;
+      const label = formatDateLabelFromValue(selectedOverviewDate);
+      if (!label) {
+        reservationContext.classList.remove("is-visible");
+        reservationContext.innerHTML = "";
+        return;
+      }
+      reservationContext.classList.add("is-visible");
+      reservationContext.innerHTML = `<strong>${escapeHtml(label)}の空きを確認しました</strong><span>予約方法を選んで、希望時間の入力へ進んでください。</span>`;
+    }
+
     function timeToMinutes(time) {
       const parts = String(time || "").split(":").map(Number);
       return (parts[0] * 60) + (parts[1] || 0);
@@ -1372,10 +1796,10 @@
       });
     }
 
-    function getAvailabilityMark(count) {
-      if (count >= 3) return { mark: "○", className: "is-open" };
-      if (count >= 1) return { mark: "△", className: "is-limited" };
-      return { mark: "×", className: "is-closed" };
+    function getAvailabilityStatus(count) {
+      if (count >= 3) return { label: "空きあり", className: "is-open" };
+      if (count >= 1) return { label: "残りわずか", className: "is-limited" };
+      return { label: "空きなし", className: "is-closed" };
     }
 
     function resetBookingState(options = {}) {
@@ -1409,7 +1833,7 @@
 
       if (method === "email") {
         bookingModeBanner.className = "booking-mode-banner email";
-        bookingModeBanner.innerHTML = "<strong>メールで予約・連絡を受け取る</strong>確認メールを受け取るため、メールアドレスを入力してください。";
+        bookingModeBanner.innerHTML = "<strong>メールで予約する</strong>確認メールを受け取るため、普段確認できるメールアドレスを入力してください。";
         bookingNotice.textContent = "予約完了後、入力いただいたメールアドレスへ確認メールを送信します。届かない場合は、入力間違いまたは迷惑メールフォルダをご確認ください。";
       } else if (method === "none") {
         bookingModeBanner.className = "booking-mode-banner none";
@@ -1420,7 +1844,9 @@
         bookingModeBanner.innerHTML = "";
       }
 
+      updateReservationContext();
       resetBookingState({ clearSlots });
+      setStep(bookingFormOpened ? 3 : 2);
     }
 
     function closeRoute() {
@@ -1431,6 +1857,7 @@
       emailInput.required = false;
       bookingModeBanner.className = "booking-mode-banner";
       bookingModeBanner.innerHTML = "";
+      updateReservationContext();
       methodButtons.forEach((button) => {
         button.classList.remove("is-active");
         button.setAttribute("aria-pressed", "false");
@@ -1438,6 +1865,7 @@
         if (option) option.classList.remove("is-active");
       });
       setMessage("", "");
+      setStep(1);
     }
 
     function openBookingForm(method) {
@@ -1446,14 +1874,112 @@
         applyOverviewSlot(selectedOverviewDate, selectedOverviewTime);
       }
       form.scrollIntoView({ behavior: "smooth", block: "start" });
+      setStep(3);
     }
 
     function createPeriodSummary(slots) {
       return periodDefinitions.map((period) => {
         const periodSlots = getPeriodSlots(slots, period);
-        const status = getAvailabilityMark(periodSlots.length);
-        return `<span class="period ${status.className}">${period.label}<b>${status.mark}</b></span>`;
+        const status = getAvailabilityStatus(periodSlots.length);
+        return `<span class="period ${status.className}">${period.label}<b>${status.label}</b></span>`;
       }).join("");
+    }
+
+    function createTimeRanges(slots) {
+      const sortedSlots = [...new Set(slots)].sort((a, b) => timeToMinutes(a) - timeToMinutes(b));
+      if (!sortedSlots.length) return [];
+
+      const ranges = [];
+      let start = sortedSlots[0];
+      let end = sortedSlots[0];
+
+      for (let i = 1; i < sortedSlots.length; i++) {
+        const current = sortedSlots[i];
+        const previousMinutes = timeToMinutes(end);
+        const currentMinutes = timeToMinutes(current);
+
+        if (currentMinutes - previousMinutes === 15) {
+          end = current;
+        } else {
+          ranges.push({ start, end });
+          start = current;
+          end = current;
+        }
+      }
+
+      ranges.push({ start, end });
+      return ranges;
+    }
+
+    function minutesToTime(totalMinutes) {
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+    }
+
+    const slotDisplayPeriods = [
+      { label: "午前", start: 10 * 60, end: 11 * 60 + 45 },
+      { label: "昼", start: 12 * 60, end: 14 * 60 + 45 },
+      { label: "夕方", start: 15 * 60, end: 17 * 60 + 45 },
+      { label: "夜", start: 18 * 60, end: 21 * 60 }
+    ];
+
+    function formatRangeLabel(labels) {
+      const uniqueLabels = labels.filter((label, index) => labels.indexOf(label) === index);
+      if (uniqueLabels.length <= 1) return uniqueLabels[0] || "空き";
+      return `${uniqueLabels[0]}〜${uniqueLabels[uniqueLabels.length - 1]}`;
+    }
+
+    function createDisplayTimeRanges(slots) {
+      return createTimeRanges(slots).flatMap((range) => {
+        const rangeStart = timeToMinutes(range.start);
+        const rangeEnd = timeToMinutes(range.end);
+        const pieces = slotDisplayPeriods
+          .map((period) => ({
+            labels: [period.label],
+            start: Math.max(rangeStart, period.start),
+            end: Math.min(rangeEnd, period.end)
+          }))
+          .filter((piece) => piece.start <= piece.end);
+
+        if (pieces.length <= 1) {
+          return [{
+            label: pieces[0] ? formatRangeLabel(pieces[0].labels) : "空き",
+            start: range.start,
+            end: range.end
+          }];
+        }
+
+        const mergedPieces = [];
+        for (let i = 0; i < pieces.length; i++) {
+          const piece = { ...pieces[i], labels: [...pieces[i].labels] };
+          const duration = piece.end - piece.start;
+
+          if (duration <= 30 && mergedPieces.length) {
+            const previous = mergedPieces[mergedPieces.length - 1];
+            previous.end = piece.end;
+            previous.labels.push(...piece.labels);
+            continue;
+          }
+
+          if (duration <= 30 && i + 1 < pieces.length) {
+            pieces[i + 1] = {
+              ...pieces[i + 1],
+              labels: [...piece.labels, ...pieces[i + 1].labels],
+              start: piece.start
+            };
+            continue;
+          }
+
+          mergedPieces.push(piece);
+        }
+
+        return mergedPieces.map((piece) => ({
+          label: formatRangeLabel(piece.labels),
+          start: minutesToTime(piece.start),
+          end: minutesToTime(piece.end)
+        }));
+      });
     }
 
     function createSlotButtons(dateValue, slots) {
@@ -1461,11 +1987,24 @@
         return '<p class="hint">この日は現在選べる空き時間がありません。</p>';
       }
 
-      const buttons = slots.map((slot) => (
-        `<button class="slot-button" type="button" data-date="${dateValue}" data-time="${slot}">${slot}</button>`
-      )).join("");
+      const groups = createDisplayTimeRanges(slots).map((range) => {
+        const timeText = range.start === range.end ? `${range.start}のみ` : `${range.start}〜${range.end}`;
+        return `
+          <div class="slot-range">
+            <span class="slot-range-label">${range.label}</span>
+            <div class="slot-range-time">${timeText}</div>
+          </div>
+        `;
+      }).join("");
 
-      return `<p class="hint">時間を押すと、下の予約フォームに反映されます。</p><div class="slot-buttons">${buttons}</div>`;
+      return `
+        <p class="slot-detail-note">時間内から開始時間を選べます</p>
+        <div class="slot-range-list">${groups}</div>
+        <div class="slot-detail-cta">
+          <p>体験は約60分です。</p>
+          <button class="slot-detail-reserve-button" type="button" data-open-reservation data-reserve-date="${dateValue}">体験予約に進む</button>
+        </div>
+      `;
     }
 
     function createLoadingBox(text) {
@@ -1488,6 +2027,18 @@
       weekModeToggle.setAttribute("aria-pressed", String(!isCustom));
       dateSearchToggle.setAttribute("aria-pressed", String(isCustom));
       dateSearch.classList.toggle("is-open", isCustom);
+    }
+
+    function updateCustomDateDisplay() {
+      if (!customDateDisplay) return;
+      const value = customDateInput.value;
+      if (!value) {
+        customDateDisplay.textContent = "日付を選択してください";
+        customDateDisplay.classList.add("is-empty");
+        return;
+      }
+      customDateDisplay.textContent = formatDateLabelFromValue(value);
+      customDateDisplay.classList.remove("is-empty");
     }
 
     function populateTimeSelect(slots, preferredTime) {
@@ -1530,8 +2081,11 @@
         const isSelected = item.value === selectedDateValue;
         return `
           <article class="day-card ${isSelected ? "is-selected-day" : ""}">
-            <button class="day-button" type="button" data-detail="day-${index}">
-              <span class="day-head"><span>${item.label}${isSelected ? '<span class="selected-label">選択日</span>' : ""}</span><span>詳細</span></span>
+            <button class="day-button" type="button" data-detail="day-${index}" aria-expanded="false">
+              <span class="day-head">
+                <span>${item.label}${isSelected ? '<span class="selected-label">選択日</span>' : ""}</span>
+                <span class="day-action">詳しい時間を見る</span>
+              </span>
               <span class="periods">${createPeriodSummary(item.slots)}</span>
             </button>
             <div class="slot-detail" id="day-${index}">
@@ -1926,24 +2480,32 @@
     availabilityToggle.addEventListener("click", () => {
       const isOpen = availabilitySection.classList.toggle("is-open");
       availabilityToggle.setAttribute("aria-expanded", String(isOpen));
+      if (isOpen) setStep(1);
     });
 
     weekModeToggle.addEventListener("click", async () => {
       setAvailabilityMode("week");
       customDateInput.value = "";
+      updateCustomDateDisplay();
+      setStep(1);
       await loadAvailabilityOverview();
     });
 
     dateSearchToggle.addEventListener("click", () => {
       availabilitySection.classList.add("is-open");
       availabilityToggle.setAttribute("aria-expanded", "true");
-      setAvailabilityMode("custom");
-      customDateInput.focus();
+      const shouldOpen = !dateSearch.classList.contains("is-open");
+      setAvailabilityMode(shouldOpen ? "custom" : "week");
+      setStep(1);
+      if (shouldOpen) {
+        customDateInput.focus();
+      }
     });
 
     reservationToggle.addEventListener("click", () => {
       const isOpen = reservationSection.classList.toggle("is-open");
       reservationToggle.setAttribute("aria-expanded", String(isOpen));
+      setStep(isOpen ? 2 : 1);
     });
 
     contactToggle.addEventListener("click", () => {
@@ -1970,10 +2532,28 @@
       showRoute(clickedMethod);
     });
 
+    content.addEventListener("click", (event) => {
+      const reservationButton = event.target.closest("[data-open-reservation]");
+      if (!reservationButton) return;
+
+      if (reservationButton.dataset.reserveDate) {
+        selectedOverviewDate = reservationButton.dataset.reserveDate;
+        selectedOverviewTime = "";
+        applyOverviewSlot(selectedOverviewDate, "");
+      }
+
+      reservationSection.classList.add("is-open");
+      reservationToggle.setAttribute("aria-expanded", "true");
+      updateReservationContext();
+      setStep(2);
+      reservationSection.scrollIntoView({ behavior: "smooth", block: "center" });
+      const firstMethodButton = document.querySelector("[data-method-choice]");
+      if (firstMethodButton) firstMethodButton.focus({ preventScroll: true });
+    });
+
     availabilityList.addEventListener("click", async (event) => {
       const retryButton = event.target.closest("[data-retry-availability]");
       const dayButton = event.target.closest("[data-detail]");
-      const slotButton = event.target.closest("[data-date][data-time]");
 
       if (retryButton) {
         await retryAvailabilityLoad();
@@ -1982,48 +2562,37 @@
 
       if (dayButton) {
         const detail = document.getElementById(dayButton.dataset.detail);
-        if (detail) detail.classList.toggle("is-open");
-        return;
-      }
-
-      if (slotButton) {
-        selectedOverviewDate = slotButton.dataset.date;
-        selectedOverviewTime = slotButton.dataset.time;
-        applyOverviewSlot(selectedOverviewDate, selectedOverviewTime);
-
-        if (methodSelect.value !== "email" && methodSelect.value !== "none") {
-          reservationSection.classList.add("is-open");
-          reservationToggle.setAttribute("aria-expanded", "true");
-          const firstMethodButton = document.querySelector("[data-method-choice]");
-          if (firstMethodButton) firstMethodButton.focus();
-          setMessage("error", "予約方法を選んでから、カード内のボタンで予約フォームへ進めます。");
-          reservationSection.scrollIntoView({ behavior: "smooth", block: "center" });
-          return;
+        if (detail) {
+          const beforeTop = dayButton.getBoundingClientRect().top;
+          const shouldOpen = !detail.classList.contains("is-open");
+          availabilityList.querySelectorAll(".slot-detail.is-open").forEach((openDetail) => {
+            openDetail.classList.remove("is-open");
+            const openCard = openDetail.closest(".day-card");
+            if (openCard) openCard.classList.remove("is-detail-open");
+          });
+          availabilityList.querySelectorAll("[data-detail]").forEach((button) => {
+            button.setAttribute("aria-expanded", "false");
+            const action = button.querySelector(".day-action");
+            if (action) action.textContent = "詳しい時間を見る";
+          });
+          const currentCard = dayButton.closest(".day-card");
+          if (shouldOpen) {
+            detail.classList.add("is-open");
+            if (currentCard) currentCard.classList.add("is-detail-open");
+          } else if (currentCard) {
+            currentCard.classList.remove("is-detail-open");
+          }
+          dayButton.setAttribute("aria-expanded", String(shouldOpen));
+          const action = dayButton.querySelector(".day-action");
+          if (action) action.textContent = shouldOpen ? "閉じる" : "詳しい時間を見る";
+          const afterTop = dayButton.getBoundingClientRect().top;
+          const topDiff = afterTop - beforeTop;
+          if (Math.abs(topDiff) > 1) {
+            window.scrollBy({ top: topDiff, left: 0, behavior: "auto" });
+          }
         }
-
-        form.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    });
-
-    customSlotResult.addEventListener("click", async (event) => {
-      const slotButton = event.target.closest("[data-date][data-time]");
-      if (!slotButton) return;
-
-      selectedOverviewDate = slotButton.dataset.date;
-      selectedOverviewTime = slotButton.dataset.time;
-      applyOverviewSlot(selectedOverviewDate, selectedOverviewTime);
-
-      if (methodSelect.value !== "email" && methodSelect.value !== "none") {
-        reservationSection.classList.add("is-open");
-        reservationToggle.setAttribute("aria-expanded", "true");
-        const firstMethodButton = document.querySelector("[data-method-choice]");
-        if (firstMethodButton) firstMethodButton.focus();
-        setMessage("error", "予約方法を選んでから、カード内のボタンで予約フォームへ進めます。");
-        reservationSection.scrollIntoView({ behavior: "smooth", block: "center" });
         return;
       }
-
-      form.scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
     msg.addEventListener("click", async (event) => {
@@ -2065,12 +2634,16 @@
     });
 
     dateInput.addEventListener("change", loadSlots);
-    customDateInput.addEventListener("change", loadCustomDateSlots);
+    customDateInput.addEventListener("change", () => {
+      updateCustomDateDisplay();
+      loadCustomDateSlots();
+    });
     dateInput.addEventListener("click", () => openDatePicker(dateInput));
     customDateInput.addEventListener("click", () => openDatePicker(customDateInput));
 
     setDateMin();
     showRoute("", { clearSlots: true });
+    setStep(1);
     loadAvailabilityOverview();
   </script>
 </body>
