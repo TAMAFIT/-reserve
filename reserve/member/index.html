@@ -13,6 +13,7 @@
     gtag('js', new Date());
 
     gtag('config', 'AW-18078211726');
+    gtag('config', 'G-VR7C79KFLG');
   </script>
 
   <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
@@ -393,8 +394,18 @@
 
 <script>
   const GAS_URL = "https://script.google.com/macros/s/AKfycbwk--BBlH7rg_VF9WDfqlvcmloBydipwdK60CVEk1fvPunvSTvR5IkbMxNbyHhmSDuS/exec";
-  const LIFF_ID = "2009803249-QQEbOzvg"; 
-  
+  const LIFF_ID = "2009803249-QQEbOzvg";
+  const ga4EventsSent = new Set();
+
+  function trackGa4Once(eventName, parameters = {}, uniqueKey = eventName) {
+    if (ga4EventsSent.has(uniqueKey) || typeof gtag !== 'function') return;
+    ga4EventsSent.add(uniqueKey);
+    gtag('event', eventName, {
+      ...parameters,
+      transport_type: 'beacon'
+    });
+  }
+
   let userProfile = null;
   let memberInfo = null;
 
@@ -444,6 +455,9 @@
       targetForm.style.display = 'none';
     } else {
       targetForm.style.display = 'block';
+      if (viewId === 'trialFormView') {
+        trackGa4Once('line_trial_form_view');
+      }
       setTimeout(() => targetForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
     }
   }
@@ -523,6 +537,13 @@
     const defaultBtnText = btn.textContent;
 
     if(!d || !t) return alert("希望日と時間を選択してください。");
+    if (!isMember) {
+      trackGa4Once(
+        'booking_submit',
+        { reservation_method: 'line' },
+        'booking_submit:line'
+      );
+    }
     btn.disabled = true; btn.textContent = "送信中...";
 
     const payload = {
@@ -582,6 +603,11 @@
     msgArea.innerHTML = '<span style="color:#2ea14c; font-weight:bold;">リクエストを送信しました！<br>LINEの通知をご確認ください。</span>';
 
     if (!isMember) {
+      trackGa4Once(
+        'trial_booking_complete',
+        { reservation_method: 'line' },
+        'trial_booking_complete'
+      );
       await fireTrialConversionOnce();
     }
 

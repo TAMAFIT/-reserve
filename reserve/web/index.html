@@ -12,6 +12,7 @@
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'AW-18078211726');
+    gtag('config', 'G-VR7C79KFLG');
   </script>
 
   <style>
@@ -1732,6 +1733,16 @@
     const LINE_FRIEND_URL = "https://lin.ee/ypLygRb";
     const GOOGLE_MAPS_URL = "https://maps.app.goo.gl/naVGavFY9bZjyS228";
     const TRIAL_CONVERSION_SEND_TO = "AW-18078211726/ELYXCM-Q4aYCEI69rqxD";
+    const ga4EventsSent = new Set();
+
+    function trackGa4Once(eventName, parameters = {}, uniqueKey = eventName) {
+      if (ga4EventsSent.has(uniqueKey) || typeof gtag !== "function") return;
+      ga4EventsSent.add(uniqueKey);
+      gtag("event", eventName, {
+        ...parameters,
+        transport_type: "beacon"
+      });
+    }
 
     const availabilitySection = document.getElementById("availabilitySection");
     const availabilityToggle = document.getElementById("availabilityToggle");
@@ -1926,6 +1937,11 @@
     }
 
     function openBookingForm(method) {
+      trackGa4Once(
+        "booking_form_start",
+        { reservation_method: method },
+        `booking_form_start:${method}`
+      );
       showRoute(method, { openForm: true });
       if (selectedOverviewDate) {
         applyOverviewSlot(selectedOverviewDate, selectedOverviewTime);
@@ -2488,6 +2504,12 @@
         return;
       }
 
+      trackGa4Once(
+        "booking_submit",
+        { reservation_method: method },
+        `booking_submit:${method}`
+      );
+
       const payload = {
         type: "trial",
         name,
@@ -2513,6 +2535,11 @@
         const result = await response.json();
 
         if (result.status === "success") {
+          trackGa4Once(
+            "trial_booking_complete",
+            { reservation_method: method },
+            "trial_booking_complete"
+          );
           await fireTrialConversionOnce();
 
           const completeMessage = method === "email"
@@ -2537,7 +2564,10 @@
     availabilityToggle.addEventListener("click", () => {
       const isOpen = availabilitySection.classList.toggle("is-open");
       availabilityToggle.setAttribute("aria-expanded", String(isOpen));
-      if (isOpen) setStep(1);
+      if (isOpen) {
+        trackGa4Once("availability_open");
+        setStep(1);
+      }
     });
 
     weekModeToggle.addEventListener("click", async () => {
@@ -2571,6 +2601,12 @@
     });
 
     reservationBody.addEventListener("click", (event) => {
+      const lineFriendButton = event.target.closest(".line-button");
+      if (lineFriendButton) {
+        trackGa4Once("line_friend_click");
+        return;
+      }
+
       const proceedButton = event.target.closest("[data-open-booking-form]");
       if (proceedButton) {
         openBookingForm(proceedButton.dataset.openBookingForm);
@@ -2586,12 +2622,19 @@
         return;
       }
 
+      trackGa4Once(
+        "reservation_method_select",
+        { reservation_method: clickedMethod },
+        `reservation_method_select:${clickedMethod}`
+      );
       showRoute(clickedMethod);
     });
 
     content.addEventListener("click", (event) => {
       const reservationButton = event.target.closest("[data-open-reservation]");
       if (!reservationButton) return;
+
+      trackGa4Once("reservation_start");
 
       if (reservationButton.dataset.reserveDate) {
         selectedOverviewDate = reservationButton.dataset.reserveDate;
@@ -2634,6 +2677,7 @@
           });
           const currentCard = dayButton.closest(".day-card");
           if (shouldOpen) {
+            trackGa4Once("availability_detail_view");
             detail.classList.add("is-open");
             if (currentCard) currentCard.classList.add("is-detail-open");
           } else if (currentCard) {
@@ -2701,6 +2745,7 @@
     setDateMin();
     showRoute("", { clearSlots: true });
     setStep(1);
+    trackGa4Once("availability_open");
     loadAvailabilityOverview();
   </script>
 </body>
