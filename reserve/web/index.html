@@ -234,14 +234,6 @@
       font-weight: 900;
     }
 
-    .action-panel {
-      margin-bottom: 14px;
-      padding: 14px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.82);
-    }
-
     .action-toggle {
       width: 100%;
       min-height: 48px;
@@ -268,16 +260,19 @@
       line-height: 1;
     }
 
-    .action-panel.is-open .action-toggle::after {
+    .contact-panel.is-open .action-toggle::after {
       transform: rotate(180deg);
     }
 
     .reservation-body {
       display: none;
-      margin-top: 12px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #dfe8e3;
+      text-align: left;
     }
 
-    .action-panel.is-open .reservation-body {
+    .reservation-panel.is-open .reservation-body {
       display: block;
     }
 
@@ -399,10 +394,6 @@
 
     .availability.is-open .availability-body {
       display: block;
-    }
-
-    .action-panel {
-      order: 2;
     }
 
     .availability-list {
@@ -681,7 +672,7 @@
       box-shadow: 0 8px 18px rgba(24, 32, 42, 0.06);
     }
 
-    .availability-reserve p {
+    .availability-reserve > p {
       margin: 0 0 10px;
       color: var(--blue-dark);
       font-size: 13px;
@@ -691,6 +682,7 @@
     }
 
     .availability-reserve-button {
+      position: relative;
       width: 100%;
       min-height: 54px;
       border: 0;
@@ -704,7 +696,22 @@
       box-shadow: 0 8px 18px rgba(15, 138, 69, 0.28);
     }
 
-    .availability-reserve span {
+    .availability-reserve-button::after {
+      content: "⌄";
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      font-size: 22px;
+      line-height: 1;
+      transform: translateY(-55%);
+      transition: transform 0.15s ease;
+    }
+
+    .reservation-panel.is-open .availability-reserve-button::after {
+      transform: translateY(-45%) rotate(180deg);
+    }
+
+    .reservation-method-hint {
       display: block;
       margin-top: 8px;
       color: var(--muted);
@@ -1548,71 +1555,6 @@
       </div>
 
       <div class="content">
-        <section class="action-panel" id="reservationSection" aria-label="予約方法">
-          <button class="action-toggle" id="reservationToggle" type="button" aria-expanded="false">
-            予約する
-          </button>
-          <div class="reservation-body" id="reservationBody">
-            <div class="reservation-context" id="reservationContext"></div>
-            <div class="form-group">
-              <label>予約方法<span class="badge optional">任意</span></label>
-              <select class="method-select-hidden" id="methodSelect" aria-hidden="true" tabindex="-1">
-                <option value="" selected>予約方法を選択してください</option>
-                <option value="line">LINEで予約・連絡を受け取る</option>
-                <option value="email">メールで予約・連絡を受け取る</option>
-                <option value="none">連絡先を入力せずに予約する</option>
-              </select>
-              <div class="method-choice-grid" role="group" aria-label="予約方法を選択">
-                <div class="method-option line">
-                  <button class="method-choice" type="button" data-method-choice="line">
-                    <span class="method-icon" aria-hidden="true">LINE</span>
-                    <span class="method-copy">
-                      <strong>LINEで予約する<span class="recommend-badge">おすすめ</span></strong>
-                      <span>通知や日程変更の相談がしやすい方法です。</span>
-                    </span>
-                  </button>
-                  <div class="method-card line-card" id="lineRoute">
-                    <h2>LINEで予約する<span class="recommend-badge">おすすめ</span></h2>
-                    <p>友だち追加後、LINE画面下のリッチメニューから「無料体験予約」を押してください。確認や変更相談をLINEで行えます。</p>
-                    <div class="line-flow" aria-label="LINE予約の流れ">
-                      <span>友だち追加 → リッチメニュー → 無料体験予約</span>
-                    </div>
-                    <a class="line-button" href="https://lin.ee/ypLygRb" target="_blank" rel="noopener">LINE友だち追加へ進む</a>
-                  </div>
-                </div>
-                <div class="method-option email">
-                  <button class="method-choice" type="button" data-method-choice="email">
-                    <span class="method-icon" aria-hidden="true">@</span>
-                    <span class="method-copy">
-                      <strong>メールで予約する</strong>
-                      <span>LINEを使いたくない方はこちら。確認メールを受け取れます。</span>
-                    </span>
-                  </button>
-                  <div class="method-card email-card" id="emailRoute">
-                    <h2>メールで予約する</h2>
-                    <p>予約完了後、入力いただいたメールアドレスへ確認メールを送信します。普段確認できるメールアドレスをおすすめします。</p>
-                    <button class="method-proceed email-proceed" type="button" data-open-booking-form="email">メールで予約へ進む</button>
-                  </div>
-                </div>
-                <div class="method-option none is-temporarily-hidden">
-                  <button class="method-choice" type="button" data-method-choice="none">
-                    <span class="method-icon" aria-hidden="true">—</span>
-                    <span class="method-copy">
-                      <strong>連絡先なしで予約する</strong>
-                      <span>確認通知は届きません。予約完了画面をスクリーンショット等で保存してください。</span>
-                    </span>
-                  </button>
-                  <div class="method-card none-card" id="noneRoute">
-                    <h2>連絡先を入力せずに予約する</h2>
-                    <p>予約確認や日程変更のご連絡はできません。予約完了後の画面をスクリーンショットで保存してください。質問や変更がある場合は、メールまたはLINEからご連絡ください。</p>
-                    <button class="method-proceed none-proceed" type="button" data-open-booking-form="none">連絡先なしで予約へ進む</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section class="contact-panel" id="contactSection" aria-label="連絡・問い合わせ">
           <button class="action-toggle" id="contactToggle" type="button" aria-expanded="false">
             連絡・問い合わせ
@@ -1672,9 +1614,70 @@
             </div>
             <div class="availability-reserve">
               <p>行けそうな時間があれば、予約方法を選んで進めます。</p>
-              <button class="availability-reserve-button" type="button" data-open-reservation>無料体験を予約する</button>
-              <!-- 連絡先なし予約を戻す場合: LINE・メール・連絡先なしから選べます。 -->
-              <span>LINE・メールから選べます。</span>
+              <section class="reservation-panel" id="reservationSection" aria-label="予約方法">
+                <button class="availability-reserve-button" id="reservationToggle" type="button" aria-expanded="false" aria-controls="reservationBody">無料体験を予約する</button>
+                <!-- 連絡先なし予約を戻す場合: LINE・メール・連絡先なしから選べます。 -->
+                <span class="reservation-method-hint">LINE・メールから選べます。</span>
+                <div class="reservation-body" id="reservationBody">
+                  <div class="reservation-context" id="reservationContext"></div>
+                  <div class="form-group">
+                    <label>予約方法<span class="badge optional">任意</span></label>
+                    <select class="method-select-hidden" id="methodSelect" aria-hidden="true" tabindex="-1">
+                      <option value="" selected>予約方法を選択してください</option>
+                      <option value="line">LINEで予約・連絡を受け取る</option>
+                      <option value="email">メールで予約・連絡を受け取る</option>
+                      <option value="none">連絡先を入力せずに予約する</option>
+                    </select>
+                    <div class="method-choice-grid" role="group" aria-label="予約方法を選択">
+                      <div class="method-option line">
+                        <button class="method-choice" type="button" data-method-choice="line">
+                          <span class="method-icon" aria-hidden="true">LINE</span>
+                          <span class="method-copy">
+                            <strong>LINEで予約する<span class="recommend-badge">おすすめ</span></strong>
+                            <span>通知や日程変更の相談がしやすい方法です。</span>
+                          </span>
+                        </button>
+                        <div class="method-card line-card" id="lineRoute">
+                          <h2>LINEで予約する<span class="recommend-badge">おすすめ</span></h2>
+                          <p>友だち追加後、LINE画面下のリッチメニューから「無料体験予約」を押してください。確認や変更相談をLINEで行えます。</p>
+                          <div class="line-flow" aria-label="LINE予約の流れ">
+                            <span>友だち追加 → リッチメニュー → 無料体験予約</span>
+                          </div>
+                          <a class="line-button" href="https://lin.ee/ypLygRb" target="_blank" rel="noopener">LINE友だち追加へ進む</a>
+                        </div>
+                      </div>
+                      <div class="method-option email">
+                        <button class="method-choice" type="button" data-method-choice="email">
+                          <span class="method-icon" aria-hidden="true">@</span>
+                          <span class="method-copy">
+                            <strong>メールで予約する</strong>
+                            <span>LINEを使いたくない方はこちら。確認メールを受け取れます。</span>
+                          </span>
+                        </button>
+                        <div class="method-card email-card" id="emailRoute">
+                          <h2>メールで予約する</h2>
+                          <p>予約完了後、入力いただいたメールアドレスへ確認メールを送信します。普段確認できるメールアドレスをおすすめします。</p>
+                          <button class="method-proceed email-proceed" type="button" data-open-booking-form="email">メールで予約へ進む</button>
+                        </div>
+                      </div>
+                      <div class="method-option none is-temporarily-hidden">
+                        <button class="method-choice" type="button" data-method-choice="none">
+                          <span class="method-icon" aria-hidden="true">—</span>
+                          <span class="method-copy">
+                            <strong>連絡先なしで予約する</strong>
+                            <span>確認通知は届きません。予約完了画面をスクリーンショット等で保存してください。</span>
+                          </span>
+                        </button>
+                        <div class="method-card none-card" id="noneRoute">
+                          <h2>連絡先を入力せずに予約する</h2>
+                          <p>予約確認や日程変更のご連絡はできません。予約完了後の画面をスクリーンショットで保存してください。質問や変更がある場合は、メールまたはLINEからご連絡ください。</p>
+                          <button class="method-proceed none-proceed" type="button" data-open-booking-form="none">連絡先なしで予約へ進む</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
             </div>
           </div>
         </section>
@@ -2592,6 +2595,12 @@
     reservationToggle.addEventListener("click", () => {
       const isOpen = reservationSection.classList.toggle("is-open");
       reservationToggle.setAttribute("aria-expanded", String(isOpen));
+      if (isOpen) {
+        trackGa4Once("reservation_start");
+        updateReservationContext();
+        const firstMethodButton = document.querySelector("[data-method-choice]");
+        if (firstMethodButton) firstMethodButton.focus({ preventScroll: true });
+      }
       setStep(isOpen ? 2 : 1);
     });
 
