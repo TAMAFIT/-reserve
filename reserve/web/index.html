@@ -1311,6 +1311,126 @@
       border-top: 1px solid var(--line);
     }
 
+    .time-select-native {
+      display: none;
+    }
+
+    .time-picker {
+      position: relative;
+    }
+
+    .time-picker-toggle {
+      width: 100%;
+      min-height: 50px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px 44px 12px 13px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 16px;
+      text-align: left;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .time-picker-toggle::after {
+      content: "⌄";
+      position: absolute;
+      top: 50%;
+      right: 15px;
+      font-size: 19px;
+      font-weight: 900;
+      transform: translateY(-58%);
+    }
+
+    .time-picker-toggle[aria-expanded="true"] {
+      outline: 3px solid rgba(6, 199, 85, 0.18);
+      border-color: var(--blue);
+    }
+
+    .time-picker-toggle:disabled {
+      cursor: not-allowed;
+      color: var(--muted);
+      background: #f7f8f7;
+    }
+
+    .time-picker-menu {
+      display: none;
+      position: relative;
+      z-index: 3;
+      margin-top: 4px;
+      border: 1px solid #cfd9d3;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 14px 28px rgba(24, 32, 42, 0.16);
+      overflow: hidden;
+    }
+
+    .time-picker-menu.is-open {
+      display: block;
+    }
+
+    .time-picker-head {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      background: #f4faf6;
+      color: var(--blue-dark);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .time-picker-close {
+      border: 1px solid #b9d7c5;
+      border-radius: 999px;
+      padding: 6px 14px;
+      background: #fff;
+      color: var(--blue-dark);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .time-picker-options {
+      max-height: 360px;
+      overflow-y: auto;
+    }
+
+    .time-picker-option {
+      display: block;
+      width: 100%;
+      border: 0;
+      border-top: 1px solid #edf1ee;
+      padding: 12px 18px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 17px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .time-picker-option:first-child {
+      border-top: 0;
+    }
+
+    .time-picker-option:hover,
+    .time-picker-option:focus-visible,
+    .time-picker-option[aria-selected="true"] {
+      outline: none;
+      background: #eefaf3;
+      color: var(--blue-dark);
+      font-weight: 900;
+    }
+
     #result-message {
       padding: 0 22px 22px;
       font-size: 14px;
@@ -1712,10 +1832,20 @@
         <p class="status-line" id="slotStatus">空き状況を確認中...</p>
 
         <div class="form-group">
-          <label for="time">希望時間<span class="badge required">必須</span></label>
-          <select id="time" required>
-            <option value="" disabled selected>先に希望日を選択してください</option>
+          <label for="timePickerToggle">希望時間<span class="badge required">必須</span></label>
+          <select class="time-select-native" id="time" aria-hidden="true" tabindex="-1">
+            <option value="" selected>先に希望日を選択してください</option>
           </select>
+          <div class="time-picker">
+            <button class="time-picker-toggle" id="timePickerToggle" type="button" aria-expanded="false" aria-controls="timePickerMenu" disabled>先に希望日を選択してください</button>
+            <div class="time-picker-menu" id="timePickerMenu">
+              <div class="time-picker-head">
+                <span>希望時間を選択</span>
+                <button class="time-picker-close" id="timePickerClose" type="button">閉じる</button>
+              </div>
+              <div class="time-picker-options" id="timePickerOptions" role="listbox" aria-label="希望時間"></div>
+            </div>
+          </div>
         </div>
 
         <div class="form-group">
@@ -1787,6 +1917,10 @@
     const content = document.querySelector(".content");
     const dateInput = document.getElementById("date");
     const timeSelect = document.getElementById("time");
+    const timePickerToggle = document.getElementById("timePickerToggle");
+    const timePickerMenu = document.getElementById("timePickerMenu");
+    const timePickerClose = document.getElementById("timePickerClose");
+    const timePickerOptions = document.getElementById("timePickerOptions");
     const slotStatus = document.getElementById("slotStatus");
     const submitBtn = document.getElementById("submitBtn");
     const msg = document.getElementById("result-message");
@@ -1904,7 +2038,7 @@
       msg.classList.remove("is-complete");
       if (clearSlots) {
         slotStatus.style.display = "none";
-        timeSelect.innerHTML = '<option value="" disabled selected>先に希望日を選択してください</option>';
+        setTimePickerState("先に希望日を選択してください", { disabled: true });
       }
     }
 
@@ -2142,26 +2276,43 @@
       customDateDisplay.classList.remove("is-empty");
     }
 
-    function populateTimeSelect(slots, preferredTime) {
-      timeSelect.innerHTML = '<option value="" disabled selected>時間を選択してください</option>';
+    function closeTimePicker() {
+      timePickerMenu.classList.remove("is-open");
+      timePickerToggle.setAttribute("aria-expanded", "false");
+    }
 
-      if (!slots.length) {
-        timeSelect.innerHTML = '<option value="" disabled selected>この日は空き枠がありません</option>';
-        slotStatus.style.display = "block";
-        slotStatus.textContent = "別の日程を選択してください。";
-        return;
-      }
-
+    function setTimePickerState(label, options = {}) {
+      const { disabled = false, value = "", slots = [] } = options;
+      timeSelect.innerHTML = '<option value=""></option>';
       slots.forEach((slot) => {
         const option = document.createElement("option");
         option.value = slot;
         option.textContent = slot;
         timeSelect.appendChild(option);
       });
+      timeSelect.value = value;
+      timePickerToggle.textContent = label;
+      timePickerToggle.disabled = disabled;
+      timePickerOptions.innerHTML = slots.map((slot) => (
+        `<button class="time-picker-option" type="button" role="option" aria-selected="${slot === value}" data-time-value="${escapeHtml(slot)}">${escapeHtml(slot)}</button>`
+      )).join("");
+      closeTimePicker();
+    }
 
-      if (preferredTime && slots.includes(preferredTime)) {
-        timeSelect.value = preferredTime;
+    function populateTimeSelect(slots, preferredTime) {
+      if (!slots.length) {
+        setTimePickerState("この日は空き枠がありません", { disabled: true });
+        slotStatus.style.display = "block";
+        slotStatus.textContent = "別の日程を選択してください。";
+        return;
       }
+
+      const selectedTime = preferredTime && slots.includes(preferredTime) ? preferredTime : "";
+      setTimePickerState(selectedTime || "時間を選択してください", {
+        disabled: false,
+        value: selectedTime,
+        slots
+      });
 
       slotStatus.style.display = "block";
       slotStatus.textContent = "空き時間を選択できます。";
@@ -2484,7 +2635,7 @@
 
       slotStatus.style.display = "block";
       slotStatus.textContent = "空き状況を確認中...";
-      timeSelect.innerHTML = '<option value="" disabled selected>確認中...</option>';
+      setTimePickerState("確認中...", { disabled: true });
       setMessage("", "");
 
       try {
@@ -2497,7 +2648,7 @@
           populateTimeSelect([], preferredTime);
         }
       } catch (err) {
-        timeSelect.innerHTML = '<option value="" disabled selected>空き状況を取得できませんでした</option>';
+        setTimePickerState("空き状況を取得できませんでした", { disabled: true });
         slotStatus.textContent = "通信エラーが発生しました。時間をおいて再度お試しください。";
       }
     }
@@ -2768,7 +2919,47 @@
       }
     });
 
-    dateInput.addEventListener("change", loadSlots);
+    timePickerToggle.addEventListener("click", () => {
+      if (timePickerToggle.disabled) return;
+      const isOpen = timePickerMenu.classList.toggle("is-open");
+      timePickerToggle.setAttribute("aria-expanded", String(isOpen));
+      if (isOpen) {
+        const selectedOption = timePickerOptions.querySelector('[aria-selected="true"]');
+        const firstOption = timePickerOptions.querySelector(".time-picker-option");
+        (selectedOption || firstOption)?.focus();
+      }
+    });
+
+    timePickerClose.addEventListener("click", () => {
+      closeTimePicker();
+      timePickerToggle.focus();
+    });
+
+    timePickerOptions.addEventListener("click", (event) => {
+      const option = event.target.closest("[data-time-value]");
+      if (!option) return;
+      const value = option.dataset.timeValue;
+      timeSelect.value = value;
+      selectedOverviewTime = value;
+      timePickerToggle.textContent = value;
+      timePickerOptions.querySelectorAll("[data-time-value]").forEach((button) => {
+        button.setAttribute("aria-selected", String(button === option));
+      });
+      closeTimePicker();
+      timePickerToggle.focus();
+    });
+
+    timePickerMenu.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      closeTimePicker();
+      timePickerToggle.focus();
+    });
+
+    dateInput.addEventListener("change", () => {
+      closeTimePicker();
+      loadSlots();
+    });
     customDateInput.addEventListener("change", () => {
       updateCustomDateDisplay();
       loadCustomDateSlots();
